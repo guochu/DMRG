@@ -30,10 +30,12 @@ function lanczos_make_first_step(A, v)
 		@warn "imaginary part the a is very large($(abs(imag(a))))"
 	end
 	a = real(a)
-	qi -= qiminus1 * a
+	# qi -= qiminus1 * a
+	axpy!(-a, qiminus1, qi)
 	b = norm(qi)
 	if b != 0.
-	    qi /= b
+	    # qi /= b
+		lmul!(1/b, qi)
 	end
 	return a, b, qiminus1, qi, vm
 end
@@ -54,10 +56,13 @@ function lanczos_make_step(A, qiminus1, qi, bold)
 		@warn "imaginary part the a is very large($(abs(imag(a))))"
 	end
 	a = real(a)
-	qiplus1 -= (qi*a + qiminus1 * bold)
+	# qiplus1 -= (qi*a + qiminus1 * bold)
+	axpy!(-a, qi, qiplus1)
+	axpy!(-bold, qiminus1, qiplus1)
 	b = norm(qiplus1)
 	if b != 0.
-	    qiplus1 /= b
+	    # qiplus1 /= b
+	    lmul!(1/b, qiplus1)
 	end
 	qiminus1 = qi
 	qi = qiplus1
@@ -67,9 +72,11 @@ end
 function lanczos_linear_transformation_single(singleTvector, Rvectors)
 	isempty(Rvectors) && error("Rvectors is empty")
 	nR = length(Rvectors)
-	evec = Rvectors[end]*singleTvector[end]
+	# evec = Rvectors[end]*singleTvector[end]
+	evec = lmul!(singleTvector[end], Rvectors[end])
 	for i=1:(nR-1)
-	    evec += Rvectors[i]*singleTvector[i]
+	    # evec += Rvectors[i]*singleTvector[i]
+	    axpy!(singleTvector[i], Rvectors[i], evec)
 	end
 	return evec
 end
@@ -84,7 +91,8 @@ function simple_lanczos_solver(A, v, wh::String="SA", kmax::Int=10, btol::Real=1
 	    (verbosity > 3) && println("lanczos converged after the first iteration")
 	    return a, qiminus1, info
 	end
-	V = Vector{Any}()
+	# V = Vector{Any}()
+	V = typeof(qiminus1)[]
 	push!(V, qiminus1)
 	T = zeros(Float64, kmax, kmax)
 	T[1,1] = a
