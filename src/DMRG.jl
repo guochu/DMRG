@@ -95,7 +95,7 @@ include("mpo/compression.jl")
 
 # mpo hamiltonian
 include("mpohamiltonian/abstractmpotensor.jl")
-include("mpohamiltonian/SparseMPOTensor.jl")
+include("mpohamiltonian/sparsempotensor.jl")
 include("mpohamiltonian/schurmpotensor.jl")
 include("mpohamiltonian/mpohamiltonian.jl")
 include("mpohamiltonian/transfer.jl")
