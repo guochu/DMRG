@@ -11,7 +11,7 @@ module DMRG
 
 
 # auxiliary
-export truncdimcutoff, leftdeparallel, rightdeparallel, renyi_entropy
+export truncdimcutoff, leftdeparallel, rightdeparallel, renyi_entropy, ×
 
 # mps
 export AbstractMPS, MPSTensor, MPOTensor, MPSBondTensor, SiteOperator, bondtensortype, mpstensortype, mpotensortype
