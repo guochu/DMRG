@@ -11,7 +11,7 @@ module DMRG
 
 
 # auxiliary
-export truncdimcutoff, leftdeparallel, rightdeparallel, renyi_entropy, ×
+export truncdimcutoff, leftdeparallel, rightdeparallel, renyi_entropy
 
 # mps
 export AbstractMPS, MPSTensor, MPOTensor, MPSBondTensor, SiteOperator, bondtensortype, mpstensortype, mpotensortype
@@ -58,8 +58,9 @@ abstract type MPSAlgorithm end
 using Logging: @warn
 using Parameters, Printf
 
+using Reexport
 using KrylovKit
-using SphericalTensors
+@reexport using SphericalTensors
 using SphericalTensors: QR, LQ, SVD, SDD
 const TK = SphericalTensors
 
