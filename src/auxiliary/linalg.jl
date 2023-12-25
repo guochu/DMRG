@@ -1,4 +1,4 @@
-using TupleTools
+
 
 """
 	renyi_entropy(v::AbstractVector{<:Real}; α::Real=1) 

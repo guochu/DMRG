@@ -59,6 +59,7 @@ using Logging: @warn
 using Parameters, Printf
 
 using Reexport
+using TupleTools
 using KrylovKit
 @reexport using SphericalTensors
 using SphericalTensors: QR, LQ, SVD, SDD
