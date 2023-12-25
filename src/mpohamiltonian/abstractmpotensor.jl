@@ -26,7 +26,7 @@ function Base.getindex(m::AbstractSparseMPOTensor, j::Int, k::Int)
 	end
 end 
 Base.lastindex(m::AbstractSparseMPOTensor) = lastindex(storage(m))
-Base.lastindex(m::AbstractSparseMPOTensor, i::Int) = lastindex(m, i)
+Base.lastindex(m::AbstractSparseMPOTensor, i::Int) = lastindex(storage(m), i)
 
 Base.keys(x::AbstractSparseMPOTensor) = Iterators.filter(a->contains(x, a[1],a[2]),Iterators.product(1:size(x, 1),1:size(x, 2)))
 opkeys(x::AbstractSparseMPOTensor) = Iterators.filter(a-> !isscal(x,a[1],a[2]),keys(x))

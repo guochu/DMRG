@@ -1,5 +1,5 @@
 """
-    SparseMPOTensor(h1::MPSBondTensor, h2s::Vector{Tuple{M, M}}) where {M <: SiteOperator}
+    fromABCD(;B::AbstractVector, C::AbstractVector, D::Union{MPSBondTensor, Number}=1, A::AbstractMatrix=zeros(length(B), length(C)))
 
 Return an MPOTensor of the following form
 1 C D
@@ -28,5 +28,5 @@ function fromABCD(;B::AbstractVector, C::AbstractVector, D::Union{MPSBondTensor,
     data[1, end] = D
     data[2:end-1, end] = B
     data[2:end-1, 2:end-1] = A
-    return SparseMPOTensor(data)
+    return SchurMPOTensor(data)
 end

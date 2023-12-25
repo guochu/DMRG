@@ -37,6 +37,7 @@ export environments
 export DMRG1, DMRG2, DMRG1S, TDVP1, TDVP2, TDVP1S, leftsweep!, rightsweep!, sweep!, compute!, ground_state!, ground_state
 export SubspaceExpansionScheme, OptimalExpansion
 export DMRGAlgorithm, TDVPAlgorithm
+export timeevompo, WI, WII
 export ED, exact_diagonalization, exact_timeevolution!, exact_timeevolution
 
 
@@ -112,6 +113,7 @@ include("algorithms/expansion/optimalexpand.jl")
 include("algorithms/dmrg.jl")
 include("algorithms/dmrgexcited.jl")
 include("algorithms/tdvp.jl")
+include("algorithms/w1w2.jl")
 include("algorithms/exactdiag.jl")
 
 
