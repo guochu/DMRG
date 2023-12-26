@@ -18,12 +18,14 @@ abstract type MPSAlgorithm end
 using Logging: @warn
 using Parameters, Printf
 
+using Reexport
+using TupleTools
 using KrylovKit
-using SphericalTensors
+@reexport using SphericalTensors
 using SphericalTensors: QR, LQ, SVD, SDD
 const TK = SphericalTensors
 
-using LinearAlgebra: LinearAlgebra, Symmetric, eigen
+using LinearAlgebra: LinearAlgebra, Symmetric, eigen, Diagonal
 
 # auxiliary
 include("auxiliary/periodicarray.jl")

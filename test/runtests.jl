@@ -1,9 +1,12 @@
-push!(LOAD_PATH, dirname(dirname(Base.@__DIR__)) * "/SphericalTensors/src")
-push!(LOAD_PATH, dirname(Base.@__DIR__) * "/src")
+# push!(LOAD_PATH, dirname(dirname(Base.@__DIR__)) * "/SphericalTensors/src")
 
 using Test, Random
 using SphericalTensors
-using DMRG
+
+# push!(LOAD_PATH, dirname(Base.@__DIR__) * "/src")
+# using DMRG
+
+include("../src/includes.jl")
 
 include("util.jl")
 

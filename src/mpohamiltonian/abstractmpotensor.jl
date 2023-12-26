@@ -1,8 +1,15 @@
 # store mpo tensor as a matrix of mpotensors instead of a single mpotensor
 abstract type AbstractSparseMPOTensor{S} end
+const SparseMPOTensorElement{M<:MPOTensor, T<:Number} = Union{M, T}
 
 TK.spacetype(::Type{<:AbstractSparseMPOTensor{S}}) where S = S
 TK.spacetype(x::AbstractSparseMPOTensor) = spacetype(typeof(x))
+
+
+function sparsempotensoreltype(::Type{S}, ::Type{T}) where {S <: ElementarySpace, T}
+	M = mpotensortype(S, T)
+	return SparseMPOTensorElement{M, eltype(M)}
+end
 
 storage(m::AbstractSparseMPOTensor) = m.Os
 

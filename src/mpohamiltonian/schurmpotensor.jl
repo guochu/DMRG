@@ -11,7 +11,7 @@ struct SchurMPOTensor{S<:ElementarySpace, M<:MPOTensor, T<:Number} <: AbstractSp
 	pspace::S
 end
 
-function SchurMPOTensor{S, M, T}(data::AbstractMatrix{Any}) where {S<:ElementarySpace, M <:MPOTensor, T<:Number}
+function SchurMPOTensor{S, M, T}(data::AbstractMatrix) where {S<:ElementarySpace, M <:MPOTensor, T<:Number}
 	(size(data, 1) == size(data, 2)) || throw(ArgumentError("SchurMPOTensor requires must be a matrix"))
 	Os, leftspaces, rightspaces, pspace = compute_mpotensor_data(S, M, T, data)
 	for i in 1:size(Os, 1)
@@ -21,9 +21,14 @@ function SchurMPOTensor{S, M, T}(data::AbstractMatrix{Any}) where {S<:Elementary
 	end
 	return SchurMPOTensor{S, M, T}(Os, leftspaces, rightspaces, pspace)
 end
-function SchurMPOTensor(data::AbstractMatrix{Any}, leftspaces::Vector{S}, rightspaces::Vector{S}, pspace::S) where {S <: ElementarySpace}
-	T = compute_scalartype(data)
-	M = tensormaptype(S, 2, 2, T)
+function SchurMPOTensor(data::AbstractMatrix, ::Type{T}, pspace::S) where {T <: Number, S <: ElementarySpace}
+	M = mpotensortype(S, T)
+	r = SchurMPOTensor{S, M, T}(data)
+	(r.pspace == pspace) || throw(SpaceMismatch("physical space mismatch"))
+	return r
+end
+function SchurMPOTensor(data::AbstractMatrix, ::Type{T}, leftspaces::Vector{S}, rightspaces::Vector{S}, pspace::S) where {T <: Number, S <: ElementarySpace}
+	M = mpotensortype(S, T)
 	Os = compute_mpotensor_data(M, T, data, leftspaces, rightspaces, pspace)
 	for i in 1:size(Os, 1)
 		for j in 1:i-1
@@ -32,6 +37,8 @@ function SchurMPOTensor(data::AbstractMatrix{Any}, leftspaces::Vector{S}, rights
 	end	
 	return SchurMPOTensor{S, M, T}(Os, leftspaces, rightspaces, pspace)
 end
+SchurMPOTensor(data::AbstractMatrix{Any}, leftspaces::Vector{S}, rightspaces::Vector{S}, pspace::S) where {S <: ElementarySpace} = SchurMPOTensor(
+	data, compute_scalartype(data), leftspaces, rightspaces, pspace)
 
 TK.scalartype(::Type{SchurMPOTensor{S,M,T}}) where {S,M,T} = T
 Base.copy(x::SchurMPOTensor) = SchurMPOTensor(copy(x.Os), copy(x.leftspaces), copy(x.rightspaces), x.pspace)
@@ -43,9 +50,10 @@ Base.copy(x::SchurMPOTensor) = SchurMPOTensor(copy(x.Os), copy(x.leftspaces), co
 """
 function SchurMPOTensor(data::AbstractMatrix{Any}) 
 	S, T = compute_generic_mpotensor_types(data)
-	M = tensormaptype(S, 2, 2, T)
+	M = mpotensortype(S, T)
 	return SchurMPOTensor{S, M, T}(data)
 end
+SchurMPOTensor(data::AbstractMatrix{SparseMPOTensorElement{M, T}}) where {M<:MPOTensor, T<:Number} = SchurMPOTensor{spacetype(M), M, T}(data)
 
 
 Base.contains(m::SchurMPOTensor{S, M, T}, i::Int, j::Int) where {S, M, T} = (i <= j) && (m.Os[i, j] != zero(T))

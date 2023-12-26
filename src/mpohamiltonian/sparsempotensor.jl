@@ -12,26 +12,35 @@ end
 Base.copy(x::SparseMPOTensor) = SparseMPOTensor(copy(x.Os), copy(x.leftspaces), copy(x.rightspaces), x.pspace)
 TK.scalartype(::Type{SparseMPOTensor{S,M,T}}) where {S,M,T} = T
 
-function SparseMPOTensor{S, M, T}(data::AbstractMatrix{Any}) where {S<:ElementarySpace, M <:MPOTensor, T<:Number}
+function SparseMPOTensor{S, M, T}(data::AbstractMatrix) where {S<:ElementarySpace, M <:MPOTensor, T<:Number}
 	Os, leftspaces, rightspaces, pspace = compute_mpotensor_data(S, M, T, data)
 	return SparseMPOTensor{S, M, T}(Os, leftspaces, rightspaces, pspace)
 end
+function SparseMPOTensor(data::AbstractMatrix, ::Type{T}, pspace::S) where {T <: Number, S <: ElementarySpace}
+	M = mpotensortype(S, T)
+	r = SparseMPOTensor{S, M, T}(data)
+	(r.pspace == pspace) || throw(SpaceMismatch("physical space mismatch"))
+	return r
+end
 
-function SparseMPOTensor(data::AbstractMatrix{Any}, leftspaces::Vector{S}, rightspaces::Vector{S}, pspace::S) where {S <: ElementarySpace}
-	T = compute_scalartype(data)
-	M = tensormaptype(S, 2, 2, T)
+function SparseMPOTensor(data::AbstractMatrix, ::Type{T}, leftspaces::Vector{S}, rightspaces::Vector{S}, pspace::S) where {T <: Number, S <: ElementarySpace}
+	M = mpotensortype(S, T)
 	Os = compute_mpotensor_data(M, T, data, leftspaces, rightspaces, pspace)
 	return SparseMPOTensor{S, M, T}(Os, leftspaces, rightspaces, pspace)
 end
+SparseMPOTensor(data::AbstractMatrix, leftspaces::Vector{S}, rightspaces::Vector{S}, pspace::S) where {S <: ElementarySpace} = SparseMPOTensor(
+	data, compute_scalartype(data), leftspaces, rightspaces, pspace)
 
 """
 	SparseMPOTensor(data::Array{Any, 2}) 
 """
-function SparseMPOTensor(data::AbstractMatrix{Any}) 
+function SparseMPOTensor(data::AbstractMatrix) 
 	S, T = compute_generic_mpotensor_types(data)
-	M = tensormaptype(S, 2, 2, T)
+	M = mpotensortype(S, T)
 	return SparseMPOTensor{S, M, T}(data)
 end
+SparseMPOTensor(data::AbstractMatrix{SparseMPOTensorElement{M, T}}) where {M<:MPOTensor, T<:Number} = SparseMPOTensor{spacetype(M), M, T}(data)
+
 
 Base.contains(m::SparseMPOTensor{S, M, T}, i::Int, j::Int) where {S, M, T} = (m.Os[i, j] != zero(T))
 function isscal(x::SparseMPOTensor{S,M,T}, i::Int, j::Int) where {S,M,T}
