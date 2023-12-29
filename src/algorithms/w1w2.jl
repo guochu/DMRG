@@ -105,5 +105,5 @@ function _W_impl(h::Vector)
 	return MPOHamiltonian(h2)
 end
 
-timeevompo(m::MPOHamiltonian, dt::Number, alg::TimeEvoMPOAlgorithm) = _W_impl([timeevompo(mj, dt, alg) for mj in m.data])
-timeevompo(m::MPOHamiltonian, dt::Number; alg::TimeEvoMPOAlgorithm = WII()) = timeevompo(m, dt, alg)
+timeevompo(m::MPOHamiltonian{<:SchurMPOTensor}, dt::Number, alg::TimeEvoMPOAlgorithm) = _W_impl([timeevompo(mj, dt, alg) for mj in m.data])
+timeevompo(m::MPOHamiltonian{<:SchurMPOTensor}, dt::Number; alg::TimeEvoMPOAlgorithm = WII()) = timeevompo(m, dt, alg)
