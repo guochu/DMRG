@@ -64,6 +64,15 @@ end
 
 Base.convert(::Type{<:SparseMPOTensor}, t::SchurMPOTensor) = SparseMPOTensor(t.Os, t.leftspaces, t.rightspaces, t.pspace)
 
+function diagonal_scalings(t::SchurMPOTensor{S, M, T}) where {S, M, T}
+	n = size(t, 1) - 2
+	r = Vector{T}(undef, n)
+	for i in 1:n
+		r[i] = t.Os[i+1, i+1]
+	end
+	return r
+end
+
 function Base.setindex!(m::SchurMPOTensor{S, M, T}, v, i::Int, j::Int) where {S, M, T}
 	(i > j) && throw(ArgumentError("not allowed to set the low triangular portion."))
 	if isa(v, Number)
