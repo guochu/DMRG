@@ -28,7 +28,7 @@ export leftdeparallel!, rightdeparallel!, deparallel!, deparallel
 export compress!, SVDCompression, Deparallelise, MPOCompression
 
 # mpohamiltonian
-export sparsempotensoreltype
+export sparsempotensoreltype, AbstractSparseMPOTensor
 export SchurMPOTensor, SparseMPOTensor, MPOHamiltonian, SchurMPO, SparseMPO, fromABCD
 
 # environments
