@@ -11,7 +11,7 @@ module DMRG
 
 
 # auxiliary
-export truncdimcutoff, leftdeparallel, rightdeparallel, renyi_entropy
+export truncdimcutoff, leftdeparallel, rightdeparallel, renyi_entropy, PeriodicArray
 
 # mps
 export AbstractMPS, MPSTensor, MPOTensor, MPSBondTensor, SiteOperator, bondtensortype, mpstensortype, mpotensortype
@@ -69,6 +69,7 @@ const TK = SphericalTensors
 using LinearAlgebra: LinearAlgebra, Symmetric, eigen, Diagonal
 
 # auxiliary
+include("auxiliary/periodicarray.jl")
 include("auxiliary/truncation.jl")
 include("auxiliary/deparallel.jl")
 include("auxiliary/simple_lanczos.jl")
