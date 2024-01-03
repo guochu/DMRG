@@ -10,7 +10,7 @@ println("------------------------------------")
 	dmrg_sweeps = 20
 	tol = 1.0e-2
 	for L in (3, 4)
-		println("test for L= ", L)
+		# println("test for L= ", L)
 
 		hz = rand(L)
 		J = rand(L)
@@ -30,7 +30,7 @@ println("------------------------------------")
 		end
 		obs2 = real([expectation(item, state2) for item in observers])
 
-		println(max_error(obs1, obs2))
+		# println(max_error(obs1, obs2))
 		@test max_error(obs1, obs2) < tol
 
 		U = MPO(timeevompo(h, -im*dt, alg=WII()))
@@ -41,7 +41,7 @@ println("------------------------------------")
 		end
 		obs3 = real([expectation(item, state2) for item in observers])
 
-		println(max_error(obs1, obs3))
+		# println(max_error(obs1, obs3))
 		@test max_error(obs1, obs3) < tol
 	end
 
