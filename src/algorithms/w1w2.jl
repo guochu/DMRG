@@ -107,3 +107,12 @@ end
 
 timeevompo(m::MPOHamiltonian{<:SchurMPOTensor}, dt::Number, alg::TimeEvoMPOAlgorithm) = _W_impl([timeevompo(mj, dt, alg) for mj in m.data])
 timeevompo(m::MPOHamiltonian{<:SchurMPOTensor}, dt::Number; alg::TimeEvoMPOAlgorithm = WII()) = timeevompo(m, dt, alg)
+
+"""
+	complex_stepper(dt::Number)
+Retun dt₁, dt₂
+If U = exp(H*dt) is a first order stepper,
+then U₁ = exp(H*dt₁), U₂ = exp(H*dt₂), and
+U = U₁U₂ will be a second order stepper
+"""
+complex_stepper(dt::Number) = (1-im) * dt/2, (1+im) * dt/2

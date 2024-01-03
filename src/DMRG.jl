@@ -38,7 +38,7 @@ export environments
 export DMRG1, DMRG2, DMRG1S, TDVP1, TDVP2, TDVP1S, leftsweep!, rightsweep!, sweep!, compute!, ground_state!, ground_state
 export SubspaceExpansionScheme, OptimalExpansion
 export MPSAlgorithm, DMRGAlgorithm, TDVPAlgorithm
-export timeevompo, WI, WII
+export timeevompo, WI, WII, complex_stepper
 export ED, exact_diagonalization, exact_timeevolution!, exact_timeevolution
 
 
