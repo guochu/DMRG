@@ -39,10 +39,26 @@ function _SiteW_impl(WA, WB, WC, WD)
 	return SparseMPOTensor(r)
 end
 
+function _sqrt2(dt::Complex) 
+	r = sqrt(dt)
+	return r, r
+end
+
+function _sqrt2(dt::Real)
+	if dt >= zero(dt)
+	 	r = sqrt(dt)
+	 	return r, r
+	 else
+	 	r = sqrt(-dt)
+	 	return r, -r
+	end 
+end
+
 function timeevompo(m::SchurMPOTensor, dt::Number, alg::WI)
 	WA = get_A(m)
-	WB = get_B(m) .* sqrt(dt)
-	WC = get_C(m) .* sqrt(dt)
+	δ₁, δ₂ = _sqrt2(dt)
+	WB = get_B(m) .* δ₁
+	WC = get_C(m) .* δ₂
 	D = get_D(m)
 	WD = isomorphism(storagetype(D), codomain(D), domain(D)) + dt * D
 	return _SiteW_impl(WA, WB, WC, WD)
@@ -59,6 +75,7 @@ function timeevompo(m::SchurMPOTensor, dt::Number, alg::WII)
 	WD = D
 
 	δ = dt
+	δ₁, δ₂ = _sqrt2(dt)
 	for j in 2:s1-1, k in 2:s2-1
 		init_1 = isometry(storagetype(D), codomain(D), domain(D))
 		init = [init_1, zero(m[1, k]), zero(m[j, end]), zero(m[j, k])]
@@ -71,19 +88,19 @@ function timeevompo(m::SchurMPOTensor, dt::Number, alg::WII)
 
 			@tensor out[2][-1 -2; -3 -4] := δ * x[2][-1 1; -3 -4] * m[1, end][2 -2; 2 1] 
 
-			@tensor out[2][-1 -2; -3 -4] += sqrt(δ) * x[1][4 3; 4 -4] * m[1, k][-1 -2; -3 3] 
+			@tensor out[2][-1 -2; -3 -4] += δ₂ * x[1][4 3; 4 -4] * m[1, k][-1 -2; -3 3] 
 
 			@tensor out[3][-1 -2; -3 -4] := δ * x[3][-1 1; -3 -4] * m[1, end][2 -2; 2 1] 
 
-			@tensor out[3][-1 -2; -3 -4] += sqrt(δ) * x[1][4 3; 4 -4] * m[j, end][-1 -2; -3 3]
+			@tensor out[3][-1 -2; -3 -4] += δ₁ * x[1][4 3; 4 -4] * m[j, end][-1 -2; -3 3]
 
 			@tensor out[4][-1 -2; -3 -4] := δ * x[4][-1 1; -3 -4] * m[1, end][2 -2; 2 1] 
 
 			@tensor out[4][-1 -2; -3 -4] += x[1][4 3; 4 -4] * m[j, k][-1 -2; -3 3]  
 
-			@tensor out[4][-1 -2; -3 -4] += sqrt(δ) * x[2][4 3; -3 -4] * m[j, end][-1 -2; 4 3]  
+			@tensor out[4][-1 -2; -3 -4] += δ₁ * x[2][4 3; -3 -4] * m[j, end][-1 -2; 4 3]  
 
-			@tensor out[4][-1 -2; -3 -4] += sqrt(δ) * x[3][-1 4; 3 -4] * m[1, k][3 -2; -3 4] 
+			@tensor out[4][-1 -2; -3 -4] += δ₂ * x[3][-1 4; 3 -4] * m[1, k][3 -2; -3 4] 
 
 			return RecursiveVec(out)
 		end
