@@ -10,8 +10,6 @@ include("../src/includes.jl")
 
 include("util.jl")
 
-Random.seed!(3247)
-
 include("auxiliary.jl")
 include("states.jl")
 include("mpo.jl")

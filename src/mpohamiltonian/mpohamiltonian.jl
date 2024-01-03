@@ -105,7 +105,7 @@ function MPO(h::MPOHamiltonian)
 	S = spacetype(h)
 
 	mpotensors = Vector{mpotensortype(S, T)}(undef, L)
-	embedders = PeriodicArray([right_embedders(T, h[i].rightspaces...) for i in 1:length(h)])
+	embedders = [right_embedders(T, h[i].rightspaces...) for i in 1:length(h)]
 
 	tmp = TensorMap(zeros, T, oneunit(S)*h[1].pspace ← space(embedders[1][1], 2)' * h[1].pspace )
 	for i in 1:length(embedders[1])

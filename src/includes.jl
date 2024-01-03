@@ -28,7 +28,6 @@ const TK = SphericalTensors
 using LinearAlgebra: LinearAlgebra, Symmetric, eigen, Diagonal
 
 # auxiliary
-include("auxiliary/periodicarray.jl")
 include("auxiliary/truncation.jl")
 include("auxiliary/deparallel.jl")
 include("auxiliary/simple_lanczos.jl")
