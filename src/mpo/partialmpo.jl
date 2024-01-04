@@ -30,6 +30,7 @@ function PartialMPO(data::AbstractVector{A}, positions::AbstractVector{Int}) whe
 	@assert length(data) == length(positions)
 	@assert positions[1] > 0
 	check_mpo_spaces(data)
+	isoneunit(space_r(data[end])) || throw(ArgumentError("only strict PartialMPO allowed"))
 	for i in 1:length(positions)-1
 		(positions[i] < positions[i+1]) || throw(ArgumentError("positions should be ordered from small to large"))
 	end
@@ -37,7 +38,6 @@ function PartialMPO(data::AbstractVector{A}, positions::AbstractVector{Int}) whe
 end
 end
 coeff(x::PartialMPO) = one(scalartype(x))
-
 
 storage(a::PartialMPO) = a.data
 positions(a::PartialMPO) = a.positions

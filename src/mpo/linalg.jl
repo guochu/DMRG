@@ -144,9 +144,10 @@ function apply!(h::PartialMPO, psi::MPS)
     leftspace = oneunit(space_l(h))
 
     for (i, pos) in enumerate(_start:_end)
-        if pos in positions(h)
-            r[i] = @tensor tmp[-1 -2; -3 -4 -5] := h[i][-1, -3, -4, 1] * psi[pos][-2, 1, -5]
-            leftspace = space_r(h[i])'
+        _pos = findfirst(x->x==pos, positions(h))
+        if !isnothing(_pos)
+            r[i] = @tensor tmp[-1 -2; -3 -4 -5] := h[_pos][-1, -3, -4, 1] * psi[pos][-2, 1, -5]
+            leftspace = space_r(h[_pos])'
         else
             hj = id(storagetype(M), leftspace)
             r[i] = @tensor tmp[-1 -2; -3 -4 -5] := hj[-1, -4] * psi[pos][-2, -3, -5]
