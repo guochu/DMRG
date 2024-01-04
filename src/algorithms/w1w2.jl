@@ -23,7 +23,7 @@ function get_C(x::SchurMPOTensor)
 	s1, s2 = size(x)
 	return x.Os[1, 2:s2-1]
 end
-get_D(x::SchurMPOTensor) = x.Os[1, end]
+get_D(x::SchurMPOTensor) = x[1, end]
 
 function _SiteW_impl(WA, WB, WC, WD)
 	s1, s2 = size(WA)
