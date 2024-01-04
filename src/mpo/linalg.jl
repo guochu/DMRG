@@ -12,6 +12,8 @@ Retuen an identity MPO from a given MPO
 """
 TK.id(m::MPO) = MPO([id(Matrix{scalartype(m)}, oneunit(spacetype(m)) ⊗ space(item, 2) ) for item in m.data])
 
+TK.id(m::PartialMPO) = PartialMPO([id(Matrix{scalartype(m)}, oneunit(spacetype(m)) ⊗ space(item, 2) ) for item in m.data], positions(m))
+
 
 l_tr(h::MPO) = TensorMap(ones,scalartype(h),oneunit(spacetype(h))')
 
@@ -26,18 +28,18 @@ function LinearAlgebra.tr(h::MPO)
 end
 
 
-function LinearAlgebra.lmul!(f::Number, h::MPO)
+function LinearAlgebra.lmul!(f::Number, h::Union{MPO, PartialMPO})
     if !isempty(h)
         h[1] *= f
     end
     _renormalize!(h, h[1], false)
     return h
 end
-LinearAlgebra.rmul!(h::MPO, f::Number) = lmul!(f, h)
+LinearAlgebra.rmul!(h::Union{MPO, PartialMPO}, f::Number) = lmul!(f, h)
 
-Base.:*(h::MPO, f::Number) = lmul!(f, copy(h))
-Base.:*(f::Number, h::MPO) = h * f
-Base.:/(h::MPO, f::Number) = h * (1/f)
+Base.:*(h::Union{MPO, PartialMPO}, f::Number) = lmul!(f, copy(h))
+Base.:*(f::Number, h::Union{MPO, PartialMPO}) = h * f
+Base.:/(h::Union{MPO, PartialMPO}, f::Number) = h * (1/f)
 
 
 
@@ -75,6 +77,35 @@ function Base.:+(hA::MPO, hB::MPO)
     return MPO(r)
 end
 
+function Base.:+(hA::PartialMPO, hB::PartialMPO)
+    @assert !isempty(hA)
+    (positions(hA) == positions(hB)) || throw(ArgumentError("only PartialMPOs with same positions are allowed to add"))
+    T = promote_type(scalartype(hA), scalartype(hB))
+    S = spacetype(hA)
+    M = mpotensortype(S, T)
+    scale_a = coeff(hA)
+    scale_b = coeff(hB)
+    if length(hA) == 1
+        return PartialMPO([scale_a * hA[1] + scale_b * hB[1]], positions(hA))
+    end
+    embedders = [left_embedders(T, space_l(hA[i]), space_l(hB[i])) for i in 2:length(hA)]
+    r = Vector{M}(undef, length(hA))
+    for i in 1:length(hA)
+        if i == 1
+            @tensor m1[-1 -2; -3 -4] := hA[i][-1,-2,1,-4] * (embedders[i][1])'[1, -3]
+            @tensor m1[-1 -2; -3 -4] += scale_b * hB[i][-1,-2,1,-4] * (embedders[i][2])'[1, -3]
+        elseif i == length(hA)
+            @tensor m1[-1 -2; -3 -4] := scale_a * embedders[i-1][1][-1, 1] * hA[i][1,-2,-3,-4] 
+            @tensor m1[-1 -2; -3 -4] += scale_b * embedders[i-1][2][-1, 1] * hB[i][1,-2,-3,-4] 
+        else          
+            @tensor m1[-1 -2; -3 -4] := scale_a * embedders[i-1][1][-1, 1] * hA[i][1,-2,2,-4] * (embedders[i][1])'[2, -3]
+            @tensor m1[-1 -2; -3 -4] += scale_b * embedders[i-1][2][-1, 1] * hB[i][1,-2,2,-4] * (embedders[i][2])'[2, -3]
+        end
+        r[i] = m1 
+    end 
+    return PartialMPO(r, positions(hA))       
+end
+
 # adding mpo with adjoint mpo will return an normal mpo
 Base.:+(hA::MPO, hB::AdjointMPO) = hA + convert(MPO, hB)
 Base.:+(hA::AdjointMPO, hB::MPO) = hB + hA
@@ -93,15 +124,43 @@ function Base.:*(h::MPO, psi::MPS)
     left = isomorphism(fuse(space_l(h), space_l(psi)), space_l(h) ⊗ space_l(psi))
     fusion_ts = [isomorphism(space(item, 4)' ⊗ space(item, 5)', fuse(space(item, 4)', space(item, 5)')) for item in r]
     @tensor tmp[-1 -2; -3] := left[-1, 1, 2] * r[1][1,2,-2,3,4] * fusion_ts[1][3,4,-3]
-    mpstensors = Vector{typeof(tmp)}(undef, length(h))
+    mpstensors = Vector{typeof(tmp)}(undef, length(psi))
     mpstensors[1] = tmp
-    for i in 2:length(h)
+    for i in 2:length(psi)
         @tensor tmp[-1 -2; -3] := conj(fusion_ts[i-1][1,2,-1]) * r[i][1,2,-2,3,4] * fusion_ts[i][3,4,-3]
         mpstensors[i] = tmp
     end
     return MPS(mpstensors)
+
 end
 Base.:*(h::MPO, psi::ExactMPS) = ExactMPS(h * MPS(psi))
+
+Base.:*(h::PartialMPO, psi::MPS) = apply!(h, copy(psi))
+function apply!(h::PartialMPO, psi::MPS)
+    @assert positions(h)[end] <= length(psi)
+    M = tensormaptype(spacetype(psi), 2, 3, promote_type(scalartype(h), scalartype(psi)))
+    _start, _end = positions(h)[1], positions(h)[end]
+    r = Vector{M}(undef, _end - _start + 1)
+    leftspace = oneunit(space_l(h))
+
+    for (i, pos) in enumerate(_start:_end)
+        if pos in positions(h)
+            r[i] = @tensor tmp[-1 -2; -3 -4 -5] := h[i][-1, -3, -4, 1] * psi[pos][-2, 1, -5]
+            leftspace = space_r(h[i])'
+        else
+            hj = id(storagetype(M), leftspace)
+            r[i] = @tensor tmp[-1 -2; -3 -4 -5] := hj[-1, -4] * psi[pos][-2, -3, -5]
+        end
+    end
+    fusion_ts = [isomorphism(space(item, 4)' ⊗ space(item, 5)', fuse(space(item, 4)', space(item, 5)')) for item in r]
+    left = isomorphism(fuse(space(r[1], 1), space(r[1], 2)), space(r[1], 1) ⊗ space(r[1], 2))
+    psi[_start] = @tensor tmp[1,4;7] := left[1,2,3] * r[1][2,3,4,5,6] * fusion_ts[1][5,6,7]
+    for (i, pos) in enumerate(_start+1:_end)
+        psi[pos] = @tensor tmp[3,4;7] := conj(fusion_ts[i][1,2,3]) * r[i+1][1,2,4,5,6] * fusion_ts[i+1][5,6,7]
+    end
+    return psi
+end
+
 
 
 """

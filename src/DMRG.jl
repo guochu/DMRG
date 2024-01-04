@@ -23,7 +23,7 @@ export ExactMPS
 
 
 # mpo
-export AbstractMPO, MPO, AdjointMPO, prodmpo, randommpo, expectation
+export AbstractMPO, MPO, PartialMPO, AdjointMPO, prodmpo, randommpo, expectation, positions, apply!
 export leftdeparallel!, rightdeparallel!, deparallel!, deparallel
 export compress!, SVDCompression, Deparallelise, MPOCompression
 
@@ -89,6 +89,7 @@ include("states/linalg.jl")
 # mpo
 include("mpo/abstractmpo.jl")
 include("mpo/finitempo.jl")
+include("mpo/partialmpo.jl")
 include("mpo/scaledmpo.jl")
 include("mpo/adjointmpo.jl")
 include("mpo/initializers.jl")

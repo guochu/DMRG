@@ -48,6 +48,7 @@ include("states/linalg.jl")
 # mpo
 include("mpo/abstractmpo.jl")
 include("mpo/finitempo.jl")
+include("mpo/partialmpo.jl")
 include("mpo/scaledmpo.jl")
 include("mpo/adjointmpo.jl")
 include("mpo/initializers.jl")

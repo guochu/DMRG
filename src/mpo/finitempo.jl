@@ -49,14 +49,14 @@ function check_mpo_spaces(mpotensors::Vector)
 	for i in 1:length(mpotensors)-1
 		(space_r(mpotensors[i]) == space_l(mpotensors[i+1])') || throw(SpaceMismatch())
 	end
-	isoneunit(space_l(mpotensors[1])) || throw(SpaceMismatch("space_l of the left boundary tensor should be vacuum by convention."))
+	isoneunit(space_l(mpotensors[1])) || throw(SpaceMismatch("space_l of the left boundary tensor should be vacuum by convention"))
 end
 
 storage(a::MPO) = a.data
 function Base.setindex!(h::MPO, v::MPOTensor, i::Int)
 	# check_mpotensor_dir(v) || throw(SpaceMismatch())
 	if i == 1
-		isoneunit(space_l(v)) || throw(SpaceMismatch("space_l of the left boundary tensor should be vacuum by convention."))
+		isoneunit(space_l(v)) || throw(SpaceMismatch("space_l of the left boundary tensor should be vacuum by convention"))
 	end
 	return setindex!(h.data, v, i)
 end 

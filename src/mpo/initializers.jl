@@ -70,7 +70,7 @@ function prodmpo(::Type{T}, L::Int, pos::Vector{Int}, ms::Vector) where {T <: Nu
 	return prodmpo(T, [S for i in 1:L], pos, ms)
 end
 prodmpo(L::Int, pos::Vector{Int}, ms::Vector) = prodmpo(compute_scalartype(ms), L, pos, ms)
-
+prodmpo(physpaces::Vector{<:ElementarySpace}, m::PartialMPO) = prodmpo(physpaces, positions(m), storage(m))
 
 function compute_scalartype(a)
 	T = Float64
