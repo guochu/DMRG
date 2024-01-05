@@ -28,7 +28,7 @@ not conserve quantum number, such as a†.
 function PartialMPO(data::AbstractVector{A}, positions::AbstractVector{Int}) where {A<:MPOTensor}
 	@assert !isempty(data)
 	@assert length(data) == length(positions)
-	@assert positions[1] > 0
+	# @assert positions[1] > 0 # allow periodic condition
 	check_mpo_spaces(data)
 	isoneunit(space_r(data[end])) || throw(ArgumentError("only strict PartialMPO allowed"))
 	for i in 1:length(positions)-1
