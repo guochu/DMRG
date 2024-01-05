@@ -66,7 +66,7 @@ end
 
 coeff(x::MPS) = one(scalartype(x))
 
-function check_mps_spaces(data::Vector)
+function check_mps_spaces(data::AbstractVector)
 	@assert !isempty(data)
 	# all(check_mpstensor_dir, data) || throw(SpaceMismatch())
 	isoneunit(space_l(data[1])) || throw(SpaceMismatch("space_l of MPS should be vacuum by convention."))

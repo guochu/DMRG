@@ -44,7 +44,7 @@ coeff(x::MPO) = one(scalartype(x))
 # 	return x
 # end
 
-function check_mpo_spaces(mpotensors::Vector)
+function check_mpo_spaces(mpotensors::AbstractVector)
 	# all(check_mpotensor_dir, mpotensors) || throw(SpaceMismatch())
 	for i in 1:length(mpotensors)-1
 		(space_r(mpotensors[i]) == space_l(mpotensors[i+1])') || throw(SpaceMismatch())
