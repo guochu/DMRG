@@ -27,18 +27,18 @@ function SchurMPOTensor(data::AbstractMatrix, ::Type{T}, pspace::S) where {T <: 
 	(r.pspace == pspace) || throw(SpaceMismatch("physical space mismatch"))
 	return r
 end
-function SchurMPOTensor(data::AbstractMatrix, ::Type{T}, leftspaces::Vector{S}, rightspaces::Vector{S}, pspace::S) where {T <: Number, S <: ElementarySpace}
-	M = mpotensortype(S, T)
-	Os = compute_mpotensor_data(M, T, data, leftspaces, rightspaces, pspace)
-	for i in 1:size(Os, 1)
-		for j in 1:i-1
-			(Os[i, j] == zero(T)) || throw(ArgumentError("SchurMPOTensor should be upper triangular"))
-		end
-	end	
-	return SchurMPOTensor{S, M, T}(Os, leftspaces, rightspaces, pspace)
-end
-SchurMPOTensor(data::AbstractMatrix{Any}, leftspaces::Vector{S}, rightspaces::Vector{S}, pspace::S) where {S <: ElementarySpace} = SchurMPOTensor(
-	data, compute_scalartype(data), leftspaces, rightspaces, pspace)
+# function SchurMPOTensor(data::AbstractMatrix, ::Type{T}, leftspaces::Vector{S}, rightspaces::Vector{S}, pspace::S) where {T <: Number, S <: ElementarySpace}
+# 	M = mpotensortype(S, T)
+# 	Os = compute_mpotensor_data(M, T, data, leftspaces, rightspaces, pspace)
+# 	for i in 1:size(Os, 1)
+# 		for j in 1:i-1
+# 			(Os[i, j] == zero(T)) || throw(ArgumentError("SchurMPOTensor should be upper triangular"))
+# 		end
+# 	end	
+# 	return SchurMPOTensor{S, M, T}(Os, leftspaces, rightspaces, pspace)
+# end
+# SchurMPOTensor(data::AbstractMatrix{Any}, leftspaces::Vector{S}, rightspaces::Vector{S}, pspace::S) where {S <: ElementarySpace} = SchurMPOTensor(
+# 	data, compute_scalartype(data), leftspaces, rightspaces, pspace)
 
 TK.scalartype(::Type{SchurMPOTensor{S,M,T}}) where {S,M,T} = T
 Base.copy(x::SchurMPOTensor) = SchurMPOTensor(copy(x.Os), copy(x.leftspaces), copy(x.rightspaces), x.pspace)

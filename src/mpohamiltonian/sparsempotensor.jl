@@ -23,13 +23,13 @@ function SparseMPOTensor(data::AbstractMatrix, ::Type{T}, pspace::S) where {T <:
 	return r
 end
 
-function SparseMPOTensor(data::AbstractMatrix, ::Type{T}, leftspaces::Vector{S}, rightspaces::Vector{S}, pspace::S) where {T <: Number, S <: ElementarySpace}
-	M = mpotensortype(S, T)
-	Os = compute_mpotensor_data(M, T, data, leftspaces, rightspaces, pspace)
-	return SparseMPOTensor{S, M, T}(Os, leftspaces, rightspaces, pspace)
-end
-SparseMPOTensor(data::AbstractMatrix, leftspaces::Vector{S}, rightspaces::Vector{S}, pspace::S) where {S <: ElementarySpace} = SparseMPOTensor(
-	data, compute_scalartype(data), leftspaces, rightspaces, pspace)
+# function SparseMPOTensor(data::AbstractMatrix, ::Type{T}, leftspaces::Vector{S}, rightspaces::Vector{S}, pspace::S) where {T <: Number, S <: ElementarySpace}
+# 	M = mpotensortype(S, T)
+# 	Os = compute_mpotensor_data(M, T, data, leftspaces, rightspaces, pspace)
+# 	return SparseMPOTensor{S, M, T}(Os, leftspaces, rightspaces, pspace)
+# end
+# SparseMPOTensor(data::AbstractMatrix, leftspaces::Vector{S}, rightspaces::Vector{S}, pspace::S) where {S <: ElementarySpace} = SparseMPOTensor(
+# 	data, compute_scalartype(data), leftspaces, rightspaces, pspace)
 
 """
 	SparseMPOTensor(data::Array{Any, 2}) 
