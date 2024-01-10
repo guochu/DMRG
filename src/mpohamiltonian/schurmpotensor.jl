@@ -12,7 +12,7 @@ struct SchurMPOTensor{S<:ElementarySpace, M<:MPOTensor, T<:Number} <: AbstractSp
 end
 
 function SchurMPOTensor{S, M, T}(data::AbstractMatrix) where {S<:ElementarySpace, M <:MPOTensor, T<:Number}
-	(size(data, 1) == size(data, 2)) || throw(ArgumentError("SchurMPOTensor requires must be a matrix"))
+	(size(data, 1) == size(data, 2)) || throw(ArgumentError("SchurMPOTensor requires a square matrix"))
 	Os, leftspaces, rightspaces, pspace = compute_mpotensor_data(S, M, T, data)
 	for i in 1:size(Os, 1)
 		for j in 1:i-1
