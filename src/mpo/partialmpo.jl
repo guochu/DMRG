@@ -37,7 +37,6 @@ function PartialMPO(data::AbstractVector{A}, positions::AbstractVector{Int}) whe
 	return new{A}(convert(Vector{A}, data), convert(Vector{Int}, positions))
 end
 end
-coeff(x::PartialMPO) = one(scalartype(x))
 
 storage(a::PartialMPO) = a.data
 positions(a::PartialMPO) = a.positions

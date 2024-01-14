@@ -11,7 +11,6 @@ TK.scalartype(h::Type{AdjointMPO{A}}) where A = scalartype(A)
 
 Base.adjoint(h::MPO) = AdjointMPO(h)
 Base.adjoint(h::AdjointMPO) = h.parent
-coeff(x::AdjointMPO) = coeff(x.parent)
 
 Base.getindex(a::AdjointMPO, i::Int) = mpotensor_adjoint(getindex(a.parent, i))
 Base.firstindex(a::AdjointMPO) = mpotensor_adjoint(firstindex(a.parent))

@@ -1,15 +1,12 @@
-
 #default settings
 module Defaults
 	const maxiter = 100 # for DMRG iteration
-	const D = 100
+	const D = 100 # default bond dimension 
 	const tolgauge = 1e-14 # for MPS truncation
 	const tol = 1e-12 # for DMRG iteration
-	const tollanczos = 1.0e-10
+	const tollanczos = 1.0e-10 # for lanczos eigensolver
 	const tolexp = 1.0e-8 # for local eigen in DMRG
 	const verbosity = 1
-	# using KrylovKit: GMRES
-	# const solver = GMRES(tol=1e-12, maxiter=100)
 end
 
 abstract type MPSAlgorithm end
@@ -39,7 +36,6 @@ include("states/abstractmps.jl")
 include("states/transfer.jl")
 include("states/bondview.jl")
 include("states/finitemps.jl")
-include("states/scaledmps.jl")
 include("states/exactmps.jl")
 include("states/orth.jl")
 include("states/initializers.jl")
@@ -49,7 +45,6 @@ include("states/linalg.jl")
 include("mpo/abstractmpo.jl")
 include("mpo/finitempo.jl")
 include("mpo/partialmpo.jl")
-include("mpo/scaledmpo.jl")
 include("mpo/adjointmpo.jl")
 include("mpo/initializers.jl")
 include("mpo/linalg.jl")
@@ -59,7 +54,7 @@ include("mpo/compression.jl")
 
 # mpo hamiltonian
 include("mpohamiltonian/abstractmpotensor.jl")
-include("mpohamiltonian/SparseMPOTensor.jl")
+include("mpohamiltonian/sparsempotensor.jl")
 include("mpohamiltonian/schurmpotensor.jl")
 include("mpohamiltonian/mpohamiltonian.jl")
 include("mpohamiltonian/transfer.jl")
@@ -72,6 +67,7 @@ include("envs/environments.jl")
 
 # algorithms
 include("algorithms/derivatives.jl")
+include("algorithms/transfermatrix.jl")
 include("algorithms/expansion/optimalexpand.jl")
 include("algorithms/dmrg.jl")
 include("algorithms/dmrgexcited.jl")

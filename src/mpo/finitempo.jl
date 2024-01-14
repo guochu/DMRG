@@ -30,19 +30,6 @@ function MPO(data::Vector{A}) where {A<:MPOTensor}
 	return new{A}(data)
 end
 end
-coeff(x::MPO) = one(scalartype(x))
-# overall_scale(x::AbstractMPO) = coeff(x)^(length(x))
-# rescaling!(psi::MPO, n::Real) = _rescaling!(psi, n)
-# function normalize_coeff!(x::MPO)
-# 	c = coeff(x)
-# 	if c != one(c)
-# 		for i in 1:length(x)
-# 			x[i] = lmul!(c, x[i])
-# 		end
-# 		x.coeff[] = 1
-# 	end
-# 	return x
-# end
 
 function check_mpo_spaces(mpotensors::AbstractVector)
 	# all(check_mpotensor_dir, mpotensors) || throw(SpaceMismatch())

@@ -36,6 +36,7 @@ export environments
 
 # algorithms
 export DMRG1, DMRG2, DMRG1S, TDVP1, TDVP2, TDVP1S, leftsweep!, rightsweep!, sweep!, compute!, ground_state!, ground_state
+export TransferMatrix, ac_prime, ac2_prime
 export SubspaceExpansionScheme, OptimalExpansion
 export MPSAlgorithm, DMRGAlgorithm, TDVPAlgorithm
 export timeevompo, WI, WII, complex_stepper
@@ -80,7 +81,6 @@ include("states/abstractmps.jl")
 include("states/transfer.jl")
 include("states/bondview.jl")
 include("states/finitemps.jl")
-include("states/scaledmps.jl")
 include("states/exactmps.jl")
 include("states/orth.jl")
 include("states/initializers.jl")
@@ -90,7 +90,6 @@ include("states/linalg.jl")
 include("mpo/abstractmpo.jl")
 include("mpo/finitempo.jl")
 include("mpo/partialmpo.jl")
-include("mpo/scaledmpo.jl")
 include("mpo/adjointmpo.jl")
 include("mpo/initializers.jl")
 include("mpo/linalg.jl")
@@ -113,6 +112,7 @@ include("envs/environments.jl")
 
 # algorithms
 include("algorithms/derivatives.jl")
+include("algorithms/transfermatrix.jl")
 include("algorithms/expansion/optimalexpand.jl")
 include("algorithms/dmrg.jl")
 include("algorithms/dmrgexcited.jl")

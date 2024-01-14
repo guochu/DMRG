@@ -64,7 +64,6 @@ end
 
 end
 
-coeff(x::MPS) = one(scalartype(x))
 
 function check_mps_spaces(data::AbstractVector)
 	@assert !isempty(data)

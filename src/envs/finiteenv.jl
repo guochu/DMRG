@@ -1,6 +1,4 @@
-coeff(x::MPOHamiltonian) = 1
 function init_hstorage(mpo::Union{MPO, MPOHamiltonian}, mps::MPS, center::Int)
-	(coeff(mpo) == 1.) || throw(ArgumentError("input mpo should have scale 1"))
 	(length(mpo) == length(mps)) || throw(DimensionMismatch())
 	(spacetype(mpo) == spacetype(mps)) || throw(SpaceMismatch())
 	isstrict(mpo) || throw(ArgumentError("operator must be strict"))

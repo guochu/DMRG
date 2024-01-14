@@ -54,8 +54,7 @@ function Base.:+(hA::MPO, hB::MPO)
     T = common_scalartype(hA, hB)
     S = spacetype(hA)
     M = mpotensortype(S, T)
-    scale_a = coeff(hA)
-    scale_b = coeff(hB)
+    scale_a = scale_b = one(T)
     if length(hA) == 1
         return MPO([scale_a * hA[1] + scale_b * hB[1]])
     end
@@ -83,8 +82,7 @@ function Base.:+(hA::PartialMPO, hB::PartialMPO)
     T = promote_type(scalartype(hA), scalartype(hB))
     S = spacetype(hA)
     M = mpotensortype(S, T)
-    scale_a = coeff(hA)
-    scale_b = coeff(hB)
+    scale_a = scale_b = one(T) 
     if length(hA) == 1
         return PartialMPO([scale_a * hA[1] + scale_b * hB[1]], positions(hA))
     end

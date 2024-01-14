@@ -62,3 +62,29 @@ function c_prime(x::MPSBondTensor, hleft::Vector, hright::Vector)
 end
 
 
+
+# struct OverlapAprime{L<:MPSBondTensor, R<:MPSBondTensor}
+#     left::L
+#     right::R
+# end
+
+# ∂A(left::MPSBondTensor, right::MPSBondTensor) = OverlapAprime(left, right)
+
+# function Base.:*(m::OverlapAprime, v::MPSTensor)
+#     @tensor tmp[1,3;5] := m.left[1,2] * v[2,3,4] * m.right[4,5]
+# end
+
+# struct ExpecAprime{M<:Union{MPOTensor, AbstractSparseMPOTensor}, L<:Union{MPSTensor, Vector}, R<:Union{MPSTensor, Vector}}
+#     left::L
+#     m::M
+#     right::R
+# end
+# ∂A(left::MPSTensor, m::MPOTensor, right::MPSTensor) = ExpecAprime(left, m, right)
+
+# function Base.:*(m::ExpecAprime{<:MPOTensor}, v::MPSTensor)
+#     # @tensor tmp[1,6;8] := m.left[1,2,3] * v[3,4,5] * m.m[2,6,7,4] * m.right[5,7,8]
+#     return ac_prime(v, m.m, m.left, m.right)
+# end
+# function Base.:*(m::ExpecAprime{<:AbstractSparseMPOTensor}, v::MPSTensor)
+#     return ac_prime(v, m.m, m.left, m.right)
+# end
