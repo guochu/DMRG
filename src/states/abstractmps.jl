@@ -21,6 +21,7 @@ bondtensortype(::Type{S}, ::Type{T}) where {S <: ElementarySpace, T<:Diagonal} =
 
 
 abstract type AbstractMPS{A<:MPSTensor} end
+abstract type AbstractFiniteMPS{A<:MPSTensor} <: AbstractMPS{A} end
 
 TK.scalartype(::Type{<:AbstractMPS{A}}) where {A<:MPSTensor} = scalartype(A)
 TK.spacetype(::Type{<:AbstractMPS{A}}) where {A<:MPSTensor} = spacetype(A)
@@ -29,13 +30,6 @@ TK.sectortype(A::Type{<:AbstractMPS}) = sectortype(spacetype(A))
 TK.sectortype(a::AbstractMPS) = sectortype(typeof(a))
 mpstensortype(::Type{<:AbstractMPS{A}}) where {A<:MPSTensor} = A
 mpstensortype(m::AbstractMPS) = mpstensortype(typeof(m))
-
-storage(a::AbstractMPS) = error("storage not implemented for mpstype $(typeof(a))")
-Base.length(a::AbstractMPS) = length(storage(a))
-Base.isempty(a::AbstractMPS) = isempty(storage(a))
-Base.getindex(a::AbstractMPS, i::Int) = getindex(storage(a), i)
-Base.firstindex(a::AbstractMPS) = firstindex(storage(a))
-Base.lastindex(a::AbstractMPS) = lastindex(storage(a))
 
 # conventions used
 """
@@ -192,8 +186,3 @@ isstrict(s::ElementarySpace) = isoneunit(s) || (FusionStyle(sectortype(s)) isa U
 # check_mpstensor_dir(m::MPSTensor) = (!isdual(space(m, 1))) && (!isdual(space(m, 2))) && isdual(space(m, 3))
 # check_bondtensor_dir(m::MPSBondTensor) = (!isdual(space(m, 1))) && isdual(space(m, 2))
 # check_mpotensor_dir(m::MPOTensor) = (!isdual(space(m, 1))) && (!isdual(space(m, 2))) && isdual(space(m, 3)) && isdual(space(m, 4))
-
-common_scalartype(a, b) = promote_type(scalartype(a), scalartype(b))
-common_scalartype(a, b, c) = promote_type(scalartype(a), scalartype(b), scalartype(c))
-common_storagetype(a, b) = Matrix{common_scalartype(a, b)}
-common_storagetype(a, b, c) = Matrix{common_scalartype(a, b, c)}

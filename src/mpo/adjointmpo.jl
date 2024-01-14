@@ -1,7 +1,7 @@
 
 
 
-struct AdjointMPO{A <: MPOTensor} <: AbstractMPO{A}
+struct AdjointMPO{A <: MPOTensor}
 	parent::MPO{A}
 end
 

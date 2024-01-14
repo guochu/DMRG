@@ -51,7 +51,7 @@ function Base.:+(hA::MPO, hB::MPO)
     @assert !isempty(hA)
     (length(hA) == length(hB)) || throw(DimensionMismatch())
     (space_r(hA)==space_r(hB)) || throw(SpaceMismatch())
-    T = common_scalartype(hA, hB)
+    T = promote_type(scalartype(hA), scalartype(hB))
     S = spacetype(hA)
     M = mpotensortype(S, T)
     scale_a = scale_b = one(T)
@@ -107,9 +107,9 @@ end
 # adding mpo with adjoint mpo will return an normal mpo
 Base.:+(hA::MPO, hB::AdjointMPO) = hA + convert(MPO, hB)
 Base.:+(hA::AdjointMPO, hB::MPO) = hB + hA
-Base.:+(hA::AdjointMPO, hB::AdjointMPO) = adjoint(hA.parent + hB.parent)
-Base.:-(hA::AbstractMPO, hB::AbstractMPO) = hA + (-1) * hB
-Base.:-(h::AbstractMPO) = -1 * h
+# Base.:+(hA::AdjointMPO, hB::AdjointMPO) = adjoint(hA.parent + hB.parent)
+# Base.:-(hA::AbstractMPO, hB::AbstractMPO) = hA + (-1) * hB
+Base.:-(h::MPO) = -1 * h
 
 """
     Base.:*(h::MPO, psi::MPS)
@@ -293,8 +293,14 @@ for l_LL a is codomain, namely
         ----2
 l_LL =  ----3
 """
-r_RR(psiA::AbstractMPS, h::MPO, psiB::AbstractMPS) = loose_isometry(common_storagetype(psiA, h, psiB), space_r(psiB)' ⊗ space_r(h)', space_r(psiA)')
-l_LL(psiA::AbstractMPS, h::MPO, psiB::AbstractMPS) = loose_isometry(common_storagetype(psiA, h, psiB), space_l(psiA) ⊗ space_l(h)', space_l(psiB))
+function r_RR(psiA::AbstractMPS, h::MPO, psiB::AbstractMPS)
+    T = promote_type(scalartype(psiA), scalartype(h), scalartype(psiB))
+    return loose_isometry(Matrix{T}, space_r(psiB)' ⊗ space_r(h)', space_r(psiA)')
+end 
+function l_LL(psiA::AbstractMPS, h::MPO, psiB::AbstractMPS)
+    T = promote_type(scalartype(psiA), scalartype(h), scalartype(psiB))
+    loose_isometry(Matrix{T}, space_l(psiA) ⊗ space_l(h)', space_l(psiB))
+end 
 
 
 """

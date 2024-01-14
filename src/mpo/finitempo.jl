@@ -40,6 +40,13 @@ function check_mpo_spaces(mpotensors::AbstractVector)
 end
 
 storage(a::MPO) = a.data
+Base.length(a::MPO) = length(storage(a))
+Base.isempty(a::MPO) = isempty(storage(a))
+Base.getindex(a::MPO, i::Int) = getindex(storage(a), i)
+Base.firstindex(a::MPO) = firstindex(storage(a))
+Base.lastindex(a::MPO) = lastindex(storage(a))
+
+
 function Base.setindex!(h::MPO, v::MPOTensor, i::Int)
 	# check_mpotensor_dir(v) || throw(SpaceMismatch())
 	if i == 1

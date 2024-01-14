@@ -3,7 +3,7 @@
 Quantum state exactly represented as MPS without any loss of precision. The center site tensor contains all the 
 information and all the other site tensors are simply isomorphism.
 """
-struct ExactMPS{M<:MPSTensor} <: AbstractMPS{M}
+struct ExactMPS{M<:MPSTensor} <: AbstractFiniteMPS{M}
 	data::Vector{M}
 	center::Int
 
@@ -16,6 +16,11 @@ end
 end
 
 storage(a::ExactMPS) = a.data
+Base.length(a::ExactMPS) = length(storage(a))
+Base.isempty(a::ExactMPS) = isempty(storage(a))
+Base.getindex(a::ExactMPS, i::Int) = getindex(storage(a), i)
+Base.firstindex(a::ExactMPS) = firstindex(storage(a))
+Base.lastindex(a::ExactMPS) = lastindex(storage(a))
 
 function Base.setindex!(psi::ExactMPS, v, i::Int)
 	# check_mpstensor_dir(v) || throw(SpaceMismatch())

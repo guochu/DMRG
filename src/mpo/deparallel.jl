@@ -31,4 +31,4 @@ end
 	deparallel(x::AbstractMPO)
 	reduce the bond dimension of mpo using deparallelisation
 """
-deparallel(x::AbstractMPO; kwargs...) = deparallel!(copy(x); kwargs...)
+deparallel(x::MPO; kwargs...) = deparallel!(copy(x); kwargs...)

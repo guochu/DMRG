@@ -46,7 +46,7 @@ function entanglement_spectrum(m::AbstractTensorMap{S, 1, 1}) where S
 end
 
 
-function stable_tsvd(m::AbstractTensorMap, args...; trunc)
+function stable_tsvd(m::AbstractTensorMap, args...; trunc::TruncationScheme=NoTruncation())
 	try
 		return tsvd(m, args...; trunc=trunc, alg=TK.SDD())
 	catch
@@ -54,7 +54,7 @@ function stable_tsvd(m::AbstractTensorMap, args...; trunc)
 	end
 end
 
-function stable_tsvd!(m::AbstractTensorMap; trunc)
+function stable_tsvd!(m::AbstractTensorMap; trunc::TruncationScheme=NoTruncation())
 	try
 		return tsvd!(copy(m), trunc=trunc, alg=TK.SDD())
 	catch

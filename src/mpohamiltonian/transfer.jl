@@ -3,7 +3,7 @@
 function r_RR(psiA::M, h::MPOHamiltonian, psiB::M) where {M <: Union{MPS, ExactMPS}}
 	(length(psiA) == length(psiB) == length(h)) || throw(DimensionMismatch())
 	L = length(psiA)
-	T = common_scalartype(psiA, h, psiB)
+	T = promote_type(scalartype(psiA), scalartype(h), scalartype(psiB)) 
 	rrr = r_RR(psiA)
 
 	i = size(h[L], 2)
@@ -25,7 +25,7 @@ end
 function l_LL(psiA::M, h::MPOHamiltonian, psiB::M) where {M <: Union{MPS, ExactMPS}}
 	(length(psiA) == length(psiB) == length(h)) || throw(DimensionMismatch())
 	L = length(psiA)
-	T = common_scalartype(psiA, h, psiB)
+	T = promote_type(scalartype(psiA), scalartype(h), scalartype(psiB)) 
 	lll = l_LL(psiA)
 
 	i = 1
@@ -45,7 +45,7 @@ end
 
 function updateright(hold::Vector, psiAj::MPSTensor{S}, hj::AbstractSparseMPOTensor{S}, psiBj::MPSTensor) where {S <: ElementarySpace}
 	@assert length(hold) == size(hj, 2)
-	T = common_scalartype(psiAj, hj, psiBj)
+	T = promote_type(scalartype(psiAj), scalartype(hj), scalartype(psiBj)) 
 	# hnew = [TensorMap(zeros, T, space(psiAj, 1)' , hj.leftspaces[i]' ⊗ space(psiBj, 1)' ) for i in 1:size(hj, 1) ]
 	hnew = [TensorMap(zeros, T, space(psiBj, 1) ⊗ hj.leftspaces[i], space(psiAj, 1) ) for i in 1:size(hj, 1) ]
 	for (i, j) in keys(hj)
@@ -60,7 +60,7 @@ end
 
 function updateleft(hold::Vector, psiAj::MPSTensor{S}, hj::AbstractSparseMPOTensor{S}, psiBj::MPSTensor) where {S <: ElementarySpace}
 	@assert length(hold) == size(hj, 1)
-	T = common_scalartype(psiAj, hj, psiBj)
+	T = promote_type(scalartype(psiAj), scalartype(hj), scalartype(psiBj)) 
 	hnew = [TensorMap(zeros, T, space(psiAj, 3)' ⊗ hj.rightspaces[j]' , space(psiBj, 3)' ) for j in 1:size(hj, 2)]
 
 	for (i, j) in keys(hj)

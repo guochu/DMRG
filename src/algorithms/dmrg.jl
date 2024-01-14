@@ -1,8 +1,22 @@
 abstract type DMRGAlgorithm <: MPSAlgorithm end
 
-function _eig_solver(f, x, maxiter::Int, tol::Real; verbosity::Int=0)
-	eigenvalue, eigenvec, info = simple_lanczos_solver(f, x, "SR", maxiter, tol, verbosity=verbosity)
-	return eigenvalue, eigenvec
+# function _eig_solver(f, x, maxiter::Int, tol::Real; verbosity::Int=0)
+# 	eigenvalue, eigenvec, info = simple_lanczos_solver(f, x, "SR", maxiter, tol, verbosity=verbosity)
+# 	return eigenvalue, eigenvec
+# end
+
+function _eig_solver(h, init, maxiter, tol)
+	if dim(init) >= 20
+		eigenvalue_0, eigenvec_0, info = simple_lanczos_solver(h, init, "SR", maxiter, tol, verbosity=0)
+	else
+		init = TensorMap(randn, scalartype(init), space(init))
+		# eigenvalues, eigenvecs, infos = eigsolve(h, init, 1, :SR, Lanczos(; maxiter=maxiter, tol=tol, eager=true))
+		eigenvalues, eigenvecs, infos = eigsolve(h, init, 1, :SR, Lanczos())
+		# (infos.converged >= 1) 
+		eigenvalue_0 = eigenvalues[1]
+		eigenvec_0 = eigenvecs[1]
+	end
+	return eigenvalue_0, eigenvec_0
 end
 
 @with_kw struct DMRG1 <: DMRGAlgorithm 

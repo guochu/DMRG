@@ -84,7 +84,7 @@ function Base.:+(psiA::MPS, psiB::MPS)
     scale_a = scale_b = one(scalartype(psiA))
     (length(psiA) == 1) && return MPS([scale_a * psiA[1] + scale_b * psiB[1]])
 
-    T = common_scalartype(psiA, psiB)
+    T = promote_type(scalartype(psiA), scalartype(psiB))
     embedders = [right_embedders(T, space_r(aj)', space_r(bj)') for (aj, bj) in zip(psiA.data, psiB.data)]
     A = mpstensortype(spacetype(psiA), T)
     r = A[]

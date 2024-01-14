@@ -21,7 +21,7 @@ bond tensors are added on the boundaries.
 In most of the algorithms implemented based on MPS, the site tensors are often kept right
 -canonical, and the bond tensors contain the Schmidt number of the bipartition.
 """
-struct MPS{A<:MPSTensor, B<:MPSBondTensor} <: AbstractMPS{A}
+struct MPS{A<:MPSTensor, B<:MPSBondTensor} <: AbstractFiniteMPS{A}
 	data::Vector{A}
 	svectors::Vector{B}
 
@@ -86,6 +86,12 @@ function Base.getproperty(psi::MPS, s::Symbol)
 end
 
 storage(a::MPS) = a.data
+Base.length(a::MPS) = length(storage(a))
+Base.isempty(a::MPS) = isempty(storage(a))
+Base.getindex(a::MPS, i::Int) = getindex(storage(a), i)
+Base.firstindex(a::MPS) = firstindex(storage(a))
+Base.lastindex(a::MPS) = lastindex(storage(a))
+
 
 function Base.setindex!(psi::MPS, v::MPSTensor, i::Int)
 	# check_mpstensor_dir(v) || throw(SpaceMismatch())
