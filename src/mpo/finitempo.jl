@@ -4,7 +4,7 @@
 	MPO{A <: MPOTensor}
 Finite Matrix Product Operator which stores a chain of rank-4 site tensors.
 """
-struct MPO{A <: MPOTensor} <: AbstractMPO{A}
+struct MPO{A <: MPOTensor} <: AbstractFiniteMPO{A}
 	data::Vector{A}
 
 """
@@ -63,11 +63,6 @@ function Base.complex(psi::MPO)
 	end
 	return psi
 end
-
-bond_dimension(h::MPO, bond::Int) = begin
-	((bond >= 1) && (bond <= length(h))) || throw(BoundsError(storage(h), bond))
-	dim(space(h[bond], 3))
-end 
 
 isrightcanonical(a::MPO; kwargs...) = all(x->isrightcanonical(x; kwargs...), a.data)
 function isleftcanonical(a::MPO; kwargs...) 

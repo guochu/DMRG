@@ -144,6 +144,10 @@ physical_space(a::AbstractMPS, i::Int) = physical_space(a[i])
 Return all the physical spaces of MPS or MPO
 """
 physical_spaces(a::AbstractMPS) = [physical_space(a[i]) for i in 1:length(a)]
+left_virtualspace(a::AbstractMPS, i::Int) = space_l(a[i])
+right_virtualspace(a::AbstractMPS, i::Int) = space_r(a[i])
+left_virtualspaces(a::AbstractMPS) = [left_virtualspace(a, i) for i in 1:length(a)]
+right_virtualspaces(a::AbstractMPS) = [right_virtualspace(a, i) for i in 1:length(a)]
 
 # check if mps tensor is canonical
 function isleftcanonical(psij::MPSTensor; kwargs...)

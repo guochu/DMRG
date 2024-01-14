@@ -24,7 +24,7 @@ export ExactMPS
 
 
 # mpo
-export AbstractMPO, MPO, PartialMPO, AdjointMPO, prodmpo, randommpo, expectation, positions, apply!
+export AbstractMPO, AbstractFiniteMPO, MPO, PartialMPO, AdjointMPO, prodmpo, randommpo, expectation, positions, apply!
 export leftdeparallel!, rightdeparallel!, deparallel!, deparallel
 export compress!, SVDCompression, Deparallelise, MPOCompression
 

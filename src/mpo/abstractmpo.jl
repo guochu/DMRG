@@ -1,9 +1,9 @@
 abstract type AbstractMPO{A<:MPOTensor} end
+abstract type AbstractFiniteMPO{A<:MPOTensor} <: AbstractMPO{A} end
 
 TK.scalartype(::Type{<:AbstractMPO{A}}) where {A<:MPOTensor} = scalartype(A)
 TK.spacetype(::Type{<:AbstractMPO{A}}) where {A<:MPOTensor} = spacetype(A)
 TK.spacetype(m::AbstractMPO) = spacetype(typeof(m))
-
 
 space_l(state::AbstractMPO) = space_l(state[1])
 space_r(state::AbstractMPO) = space_r(state[end])
@@ -37,9 +37,18 @@ function physical_spaces(psi::AbstractMPO)
 	(xs == adjoint.(iphysical_spaces(psi))) || throw(SpaceMismatch("i and o physical dimension mismatch."))
 	return xs
 end
+left_virtualspace(a::AbstractMPO, i::Int) = space_l(a[i])
+right_virtualspace(a::AbstractMPO, i::Int) = space_r(a[i])
+left_virtualspaces(a::AbstractMPO) = [left_virtualspace(a, i) for i in 1:length(a)]
+right_virtualspaces(a::AbstractMPO) = [right_virtualspace(a, i) for i in 1:length(a)]
+
 
 ophysical_spaces(psi::AbstractMPO) = [ophysical_space(psi[i]) for i in 1:length(psi)]
 iphysical_spaces(psi::AbstractMPO) = [iphysical_space(psi[i]) for i in 1:length(psi)]
 
 bond_dimensions(h::AbstractMPO) = [bond_dimension(h, i) for i in 1:length(h)]
 bond_dimension(h::AbstractMPO) = maximum(bond_dimensions(h))
+bond_dimension(h::AbstractMPO, bond::Int) = begin
+	# ((bond >= 1) && (bond <= length(h))) || throw(BoundsError(storage(h), bond))
+	dim(space(h[bond], 3))
+end 
