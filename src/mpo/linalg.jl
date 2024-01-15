@@ -302,24 +302,6 @@ function l_LL(psiA::AbstractMPS, h::MPO, psiB::AbstractMPS)
     loose_isometry(Matrix{T}, space_l(psiA) ⊗ space_l(h)', space_l(psiB))
 end 
 
-
-"""
-    expectation(psiA::MPS, h::MPO, psiB::MPS)
-    expectation(h::MPO, psi::MPS) = expectation(psi, h, psi)
-
-Return < psiA | h | psiB >
-"""
-function expectation(psiA::AbstractMPS, h::MPO, psiB::AbstractMPS) 
-    (length(psiA) == length(h) == length(psiB)) || throw(DimensionMismatch())
-    hold = r_RR(psiA, h, psiB)
-    for i in length(psiA):-1:1
-        hold = updateright(hold, psiA[i], h[i], psiB[i])
-    end
-    return scalar(hold) 
-end
-expectation(psiA::AbstractMPS, h::AdjointMPO, psiB::AbstractMPS) = conj(expectation(psiB, h.parent, psiA))
-expectation(h::MPO, psi::AbstractMPS) = expectation(psi, h, psi)
-
 function LinearAlgebra.ishermitian(h::MPO)
     isempty(h) && throw(ArgumentError("input operator is empty."))
     isstrict(h) || return false

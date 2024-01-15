@@ -5,6 +5,7 @@
 
 A is the bra, B is ket, ⟨A|B⟩, in iterative algorithms,
 A is the output, B is the input
+Orthogonal center is the 1st site
 """
 struct OverlapCache{_A, _B, _C} <: AbstractCache
 	A::_A
@@ -43,3 +44,8 @@ leftenv(x::OverlapCache, i::Int) = x.cstorage[i]
 environment right to site i
 """
 rightenv(x::OverlapCache, i::Int) = x.cstorage[i+1]
+
+function value(x::OverlapCache)
+	h = updateright(x.cstorage[2], x.A[1], x.B[1])
+	return tr(h)
+end

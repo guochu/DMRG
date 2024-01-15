@@ -24,7 +24,7 @@ export ExactMPS
 
 
 # mpo
-export AbstractMPO, AbstractFiniteMPO, MPO, PartialMPO, AdjointMPO, prodmpo, randommpo, expectation, positions, apply!
+export AbstractMPO, AbstractFiniteMPO, MPO, PartialMPO, AdjointMPO, prodmpo, randommpo, positions, apply!
 export leftdeparallel!, rightdeparallel!, deparallel!, deparallel
 export compress!, SVDCompression, Deparallelise, MPOCompression
 
@@ -33,9 +33,10 @@ export sparsempotensoreltype, AbstractSparseMPOTensor
 export SchurMPOTensor, SparseMPOTensor, MPOHamiltonian, SchurMPO, SparseMPO, fromABCD
 
 # environments
-export environments, leftenv, rightenv
+export environments, leftenv, rightenv, value
 
 # algorithms
+export expectation, expectation_canonical
 export DMRG1, DMRG2, DMRG1S, TDVP1, TDVP2, TDVP1S, leftsweep!, rightsweep!, sweep!, compute!, ground_state!, ground_state
 export TransferMatrix, ac_prime, ac2_prime
 export SubspaceExpansionScheme, OptimalExpansion
@@ -114,6 +115,7 @@ include("envs/environments.jl")
 # algorithms
 include("algorithms/derivatives.jl")
 include("algorithms/transfermatrix.jl")
+include("algorithms/expecs.jl")
 include("algorithms/expansion/optimalexpand.jl")
 include("algorithms/dmrg.jl")
 include("algorithms/dmrgexcited.jl")

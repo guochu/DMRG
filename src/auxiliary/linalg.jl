@@ -45,6 +45,14 @@ function entanglement_spectrum(m::AbstractTensorMap{S, 1, 1}) where S
 	return LinearAlgebra.diag(convert(Array,ss))
 end
 
+function entanglement_spectrum(m::DiagonalMap)
+	s = scalartype(m)[]
+	for (c, b) in blocks(m)
+		append!(s, LinearAlgebra.diag(b))
+	end
+	return s
+end
+
 
 function stable_tsvd(m::AbstractTensorMap, args...; trunc::TruncationScheme=NoTruncation())
 	try

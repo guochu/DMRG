@@ -4,26 +4,14 @@
 	PartialMPO{A <: MPOTensor}
 Finite Matrix Product Operator which stores a chain of rank-4 site tensors.
 """
-struct PartialMPO{A <: MPOTensor} <: AbstractMPO{A}
+struct PartialMPO{A <: MPOTensor} 
 	data::Vector{A}
 	positions::Vector{Int}
 
 """
 	PartialMPO{A}(mpotensors::Vector, positions::Vector{Int})
-Constructor entrance for MPO, which only supports strictly quantum number conserving operators
 
-Site tensor convention:
-i mean in arrow, o means out arrow
-    o 
-    |
-    2
-o-1   3-i
-	4
-	|
-	i
-The left and right boundaries are always vacuum.
-The case that the right boundary is not vacuum corresponds to operators which do 
-not conserve quantum number, such as a†.
+This is mainly used for computing observables
 """
 function PartialMPO(data::AbstractVector{A}, positions::AbstractVector{Int}) where {A<:MPOTensor}
 	@assert !isempty(data)
@@ -38,8 +26,24 @@ function PartialMPO(data::AbstractVector{A}, positions::AbstractVector{Int}) whe
 end
 end
 
+PartialMPO(positions::AbstractVector{Int}, data::AbstractVector{<:MPOTensor}) = PartialMPO(data, positions)
+
+TK.scalartype(::Type{PartialMPO{A}}) where {A<:MPOTensor} = scalartype(A)
+TK.spacetype(::Type{PartialMPO{A}}) where {A<:MPOTensor} = spacetype(A)
+TK.spacetype(m::PartialMPO) = spacetype(typeof(m))
+
+
 storage(a::PartialMPO) = a.data
 positions(a::PartialMPO) = a.positions
+Base.length(a::PartialMPO) = length(storage(a))
+Base.isempty(a::PartialMPO) = isempty(storage(a))
+Base.getindex(a::PartialMPO, i::Int) = getindex(storage(a), i)
+Base.firstindex(a::PartialMPO) = firstindex(storage(a))
+Base.lastindex(a::PartialMPO) = lastindex(storage(a))
+
+space_l(state::PartialMPO) = space_l(state[1])
+space_r(state::PartialMPO) = space_r(state[end])
+
 function Base.setindex!(h::PartialMPO, v::MPOTensor, i::Int)
 	# check_mpotensor_dir(v) || throw(SpaceMismatch())
 	if i == 1
@@ -57,6 +61,26 @@ function Base.complex(psi::PartialMPO)
 	return psi
 end
 
+
+ophysical_space(a::PartialMPO, i::Int) = ophysical_space(a[i])
+iphysical_space(a::PartialMPO, i::Int) = iphysical_space(a[i])
+function physical_spaces(psi::PartialMPO)
+	xs = ophysical_spaces(psi)
+	(xs == adjoint.(iphysical_spaces(psi))) || throw(SpaceMismatch("i and o physical dimension mismatch."))
+	return xs
+end
+left_virtualspace(a::PartialMPO, i::Int) = space_l(a[i])
+right_virtualspace(a::PartialMPO, i::Int) = space_r(a[i])
+left_virtualspaces(a::PartialMPO) = [left_virtualspace(a, i) for i in 1:length(a)]
+right_virtualspaces(a::PartialMPO) = [right_virtualspace(a, i) for i in 1:length(a)]
+
+
+ophysical_spaces(psi::PartialMPO) = [ophysical_space(psi[i]) for i in 1:length(psi)]
+iphysical_spaces(psi::PartialMPO) = [iphysical_space(psi[i]) for i in 1:length(psi)]
+
+bond_dimensions(h::PartialMPO) = [bond_dimension(h, i) for i in 1:length(h)]
+bond_dimension(h::PartialMPO) = maximum(bond_dimensions(h))
+
 bond_dimension(h::PartialMPO, bond::Int) = begin
 	((bond >= 1) && (bond <= length(h))) || throw(BoundsError(storage(h), bond))
 	dim(space(h[bond], 3))
@@ -68,6 +92,3 @@ function isleftcanonical(a::PartialMPO; kwargs...)
 	# return isleftcanonical(a.data[end] * sqrt(dim(space_r(a))); kwargs...)
 	return isleftcanonical_r(a.data[end]; kwargs...)
 end
-
-
-

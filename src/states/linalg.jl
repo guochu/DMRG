@@ -1,4 +1,4 @@
-LinearAlgebra.dot(psiA::AbstractMPS, psiB::AbstractMPS) = _dot(psiA, psiB) 
+LinearAlgebra.dot(psiA::AbstractFiniteMPS, psiB::AbstractFiniteMPS) = _dot(psiA, psiB) 
 function _dot(a, b)
     (length(a) == length(b)) || throw(DimensionMismatch())
     hold = l_LL(a, b)
@@ -8,7 +8,7 @@ function _dot(a, b)
     return tr(hold)    
 end
 
-function LinearAlgebra.norm(psi::AbstractMPS; iscanonical::Bool=false) 
+function LinearAlgebra.norm(psi::AbstractFiniteMPS; iscanonical::Bool=false) 
 	n = iscanonical ? norm(psi[1]) : sqrt(abs(real(_dot(psi, psi))))
     return n 
 end
@@ -43,7 +43,7 @@ function LinearAlgebra.normalize!(psi::ExactMPS)
     normalize!(psi[psi.center])
     return psi
 end
-LinearAlgebra.normalize(psi::AbstractMPS; kwargs...) = normalize!(copy(psi); kwargs...)
+LinearAlgebra.normalize(psi::AbstractFiniteMPS; kwargs...) = normalize!(copy(psi); kwargs...)
 function LinearAlgebra.lmul!(f::Number, psi::MPS)
     if !isempty(psi)
         psi[1] *= f

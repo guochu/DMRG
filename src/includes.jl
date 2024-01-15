@@ -68,6 +68,7 @@ include("envs/environments.jl")
 # algorithms
 include("algorithms/derivatives.jl")
 include("algorithms/transfermatrix.jl")
+include("algorithms/expecs.jl")
 include("algorithms/expansion/optimalexpand.jl")
 include("algorithms/dmrg.jl")
 include("algorithms/dmrgexcited.jl")

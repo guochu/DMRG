@@ -48,6 +48,9 @@ function isscal(x::SparseMPOTensor{S,M,T}, i::Int, j::Int) where {S,M,T}
 	return (sj isa T) && (abs(sj) > 1.0e-14)
 end 
 
+Base.getindex(m::SparseMPOTensor, i::Union{UnitRange, Colon}, j::Union{UnitRange, Colon}) = SparseMPOTensor(m.Os[i, j], m.leftspaces[i], m.rightspaces[j], m.pspace)
+Base.getindex(m::SparseMPOTensor, i::Int, j::Union{UnitRange, Colon}) = getindex(m, i:i, j)
+Base.getindex(m::SparseMPOTensor, i::Union{UnitRange, Colon}, j::Int) = getindex(m, i, j:j)
 
 function Base.setindex!(m::SparseMPOTensor{S, M, T}, v, i::Int, j::Int) where {S, M, T}
 	if isa(v, Number)
