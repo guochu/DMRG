@@ -33,7 +33,7 @@ export sparsempotensoreltype, AbstractSparseMPOTensor
 export SchurMPOTensor, SparseMPOTensor, MPOHamiltonian, SchurMPO, SparseMPO, fromABCD
 
 # environments
-export environments
+export environments, leftenv, rightenv
 
 # algorithms
 export DMRG1, DMRG2, DMRG1S, TDVP1, TDVP2, TDVP1S, leftsweep!, rightsweep!, sweep!, compute!, ground_state!, ground_state

@@ -47,6 +47,8 @@ end
 function updateright!(env::ExpectationCache, site::Int)
 	env.hstorage[site] = updateright(env.hstorage[site+1], env.mps[site], env.h[site], env.mps[site])
 end
+leftenv(x::ExpectationCache, i::Int) = x.hstorage[i]
+rightenv(x::ExpectationCache, i::Int) = x.hstorage[i+1]
 
 
 # for excited states

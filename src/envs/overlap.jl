@@ -31,3 +31,15 @@ function environments(psiA::M, psiB::M) where {M <: Union{AbstractMPS, MPO}}
 	return OverlapCache(psiA, psiB, cstorage)
 end
 
+"""
+	leftenv(x::OverlapCache, i::Int) 
+
+environment left to site i
+"""
+leftenv(x::OverlapCache, i::Int) = x.cstorage[i]
+"""
+	rightenv(x::OverlapCache, i::Int)
+
+environment right to site i
+"""
+rightenv(x::OverlapCache, i::Int) = x.cstorage[i+1]
