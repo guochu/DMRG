@@ -47,8 +47,7 @@ function expectation(psiA::AbstractFiniteMPS, m::PartialMPO, psiB::AbstractFinit
     return scalar(hnew) 
 end
 
-expectation(m::PartialMPO, psi::MPS, envs=environments(psi, psi)) = expectation(psi, m, psi, envs) 
-expectation(m::PartialMPO, psi::ExactMPS) = expectation(psi, m, psi)
+expectation(m::PartialMPO, psi::AbstractFiniteMPS, envs=environments(psi, psi)) = expectation(psi, m, psi, envs) 
 
 """
     assume the underlying state is canonical
