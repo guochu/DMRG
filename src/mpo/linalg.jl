@@ -157,6 +157,7 @@ function apply!(h::PartialMPO, psi::MPS)
     for (i, pos) in enumerate(_start+1:_end)
         psi[pos] = @tensor tmp[3,4;7] := conj(fusion_ts[i][1,2,3]) * r[i+1][1,2,4,5,6] * fusion_ts[i+1][5,6,7]
     end
+    unset_svectors!(psi)
     return psi
 end
 
