@@ -23,12 +23,16 @@ In most of the algorithms implemented based on MPS, the site tensors are often k
 """
 struct MPS{A<:MPSTensor, B<:MPSBondTensor} <: AbstractFiniteMPS{A}
 	data::Vector{A}
-	svectors::Vector{B}
+	svectors::Vector{Union{Missing, B}}
+
+function MPS(data::Vector{A}, svectors::Vector{Union{Missing, B}}) where {A<:MPSTensor, B<:MPSBondTensor}
+	check_mps_spaces(data)
+	return new{A, B}(data, svectors)
+end
 
 function MPS(data::Vector{A}, svectors::Vector{B}) where {A<:MPSTensor, B<:MPSBondTensor}
-	@assert length(data)+1 == length(svectors)
-	check_mps_spaces(data)	
-	return new{A, B}(data, svectors)
+	check_mps_spaces(data, svectors)
+	return new{A, B}(data, convert(Vector{Union{Missing, B}}, svectors))
 end
 
 """
@@ -56,7 +60,7 @@ function MPS(data::Vector{A}) where {A<:MPSTensor}
 	check_mps_spaces(data)	
 	T = real(scalartype(A))
 	B = bondtensortype(spacetype(A), Diagonal{T, Vector{T}})
-	svectors = Vector{B}(undef, length(data)+1)
+	svectors = Vector{Union{Missing, B}}(missing, length(data)+1)
 	svectors[1] = Diagonal(id(space_l(data[1])))
 	svectors[end] = Diagonal(id(space_r(data[end])'))
 	return new{A, B}(data, svectors)
@@ -68,10 +72,18 @@ end
 function check_mps_spaces(data::AbstractVector)
 	@assert !isempty(data)
 	# all(check_mpstensor_dir, data) || throw(SpaceMismatch())
-	isoneunit(space_l(data[1])) || throw(SpaceMismatch("space_l of MPS should be vacuum by convention."))
+	isoneunit(space_l(data[1])) || throw(SpaceMismatch("space_l of MPS should be vacuum by convention"))
 	for i in 1:length(data)-1
 		(space_r(data[i])' == space_l(data[i+1])) || throw(SpaceMismatch())
 	end
+end
+function check_mps_spaces(data::AbstractVector, svectors::AbstractVector)
+	@assert length(data)+1 == length(svectors)
+	(isoneunit(space_l(data[1])) && isoneunit(space(svectors[1], 1))) || throw(SpaceMismatch("space_l of MPS should be vacuum by convention"))
+	for i in 1:length(data)-1
+		(space_r(data[i])' == space_l(data[i+1]) == space(svectors[i+1], 1)) || throw(SpaceMismatch())
+	end	
+	(space(svectors[end], 1) == space_r(data[end])') || throw(SpaceMismatch())
 end
 
 bondtensortype(::Type{MPS{A, B}}) where {A, B} = B
@@ -100,13 +112,7 @@ function Base.setindex!(psi::MPS, v::MPSTensor, i::Int)
 	end
 	return setindex!(psi.data, v, i)
 end 
-function Base.copy(psi::MPS) 
-	if svectors_uninitialized(psi)
-		return MPS(copy(psi.data))
-	else
-		return MPS(copy(psi.data), copy(psi.svectors))
-	end
-end
+Base.copy(psi::MPS) = MPS(copy(psi.data), copy(psi.svectors))
 
 # function Base.vcat(psiA::MPS, psiB::MPS)
 # 	(space_r(psiA)' == space_l(psiB)) || throw(SpaceMismatch("cannot cat two states with incompatible sectors."))
@@ -120,7 +126,7 @@ function Base.complex(psi::MPS)
 	return psi
 end
 
-svectors_uninitialized(psi::MPS) = any(x->!isassigned(psi.svectors, x), 1:length(psi)+1)
+svectors_uninitialized(psi::MPS) = any(ismissing, psi.svectors)
 
 """
 	isrightcanonical(a::MPS; kwargs...)
