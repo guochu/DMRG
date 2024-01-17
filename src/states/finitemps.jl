@@ -127,6 +127,10 @@ function Base.complex(psi::MPS)
 end
 
 svectors_uninitialized(psi::MPS) = any(ismissing, psi.svectors)
+function unset_svectors!(psi::MPS)
+	psi.svectors[2:end-1] .= missing
+	return psi
+end
 
 """
 	isrightcanonical(a::MPS; kwargs...)
