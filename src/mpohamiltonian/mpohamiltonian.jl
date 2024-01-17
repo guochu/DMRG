@@ -95,9 +95,12 @@ isstrict(x::MPOHamiltonian) = isoneunit(space_l(x)) && isoneunit(space_r(x))
 """
 	MPO(h::MPOHamiltonian, L::Int) 
 	
-Conversion of an MPOHamiltonian into a standard MPO
+Conversion of an MPOHamiltonian into a finite dense MPO
 """
-function MPO(h::MPOHamiltonian) 
+MPO(h::MPOHamiltonian{<:SchurMPOTensor}) = _tompo(h, 1, size(h[end], 2))
+MPO(h::MPOHamiltonian{<:SparseMPOTensor}; rowl::Int=1, colr::Int=1) = _tompo(h, rowl, colr)
+
+function _tompo(h::MPOHamiltonian, leftrow::Int, rightcol::Int) 
 	L = length(h)
 	(L >= 2) || throw(ArgumentError("size of MPO must at least be 2"))
 	# isstrict(h) || throw(ArgumentError("only strict MPOHamiltonian is allowed"))
@@ -109,7 +112,7 @@ function MPO(h::MPOHamiltonian)
 
 	tmp = TensorMap(zeros, T, oneunit(S)*h[1].pspace ← space(embedders[1][1], 2)' * h[1].pspace )
 	for i in 1:length(embedders[1])
-		@tensor tmp[-1, -2, -3, -4] += h[1, 1, i][-1,-2,1,-4] * embedders[1][i][1, -3]
+		@tensor tmp[-1, -2, -3, -4] += h[1, leftrow, i][-1,-2,1,-4] * embedders[1][i][1, -3]
 	end
 	mpotensors[1] = tmp
 	for n in 2:L-1
@@ -125,9 +128,9 @@ function MPO(h::MPOHamiltonian)
 		mpotensors[n] = tmp
 	end
 	tmp = TensorMap(zeros, T, space(embedders[L-1][1], 2)' * h[L].pspace, space_r(h)' * h[L].pspace )
-	_a = size(h[L], 2)
+	# _a = size(h[L], 2)
 	for i in 1:size(h[L], 1)
-		@tensor tmp[-1, -2, -3, -4] += conj(embedders[L-1][i][1, -1]) * h[L, i, _a][1,-2,-3,-4]
+		@tensor tmp[-1, -2, -3, -4] += conj(embedders[L-1][i][1, -1]) * h[L, i, rightcol][1,-2,-3,-4]
 	end
 	mpotensors[L] = tmp
 	return MPO(mpotensors)

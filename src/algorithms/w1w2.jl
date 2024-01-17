@@ -115,14 +115,14 @@ function timeevompo(m::SchurMPOTensor, dt::Number, alg::WII)
 	return _SiteW_impl(WA, WB, WC, WD)
 end
 
-function _W_impl(h::Vector)
-	h2 = copy(h)
-	h2[1] = SparseMPOTensor(h[1].Os[1:1, :], h[1].leftspaces[1:1], h[1].rightspaces, h[1].pspace)
-	h2[end] = SparseMPOTensor(h[end].Os[:, 1:1], h[end].leftspaces, h[end].rightspaces[1:1], h[end].pspace)
-	return MPOHamiltonian(h2)
-end
+# function _W_impl(h::Vector)
+# 	h2 = copy(h)
+# 	h2[1] = SparseMPOTensor(h[1].Os[1:1, :], h[1].leftspaces[1:1], h[1].rightspaces, h[1].pspace)
+# 	h2[end] = SparseMPOTensor(h[end].Os[:, 1:1], h[end].leftspaces, h[end].rightspaces[1:1], h[end].pspace)
+# 	return MPOHamiltonian(h2)
+# end
 
-timeevompo(m::MPOHamiltonian{<:SchurMPOTensor}, dt::Number, alg::TimeEvoMPOAlgorithm) = _W_impl([timeevompo(mj, dt, alg) for mj in m.data])
+timeevompo(m::MPOHamiltonian{<:SchurMPOTensor}, dt::Number, alg::TimeEvoMPOAlgorithm) = MPOHamiltonian([timeevompo(mj, dt, alg) for mj in m.data])
 timeevompo(m::MPOHamiltonian{<:SchurMPOTensor}, dt::Number; alg::TimeEvoMPOAlgorithm = WII()) = timeevompo(m, dt, alg)
 
 """
