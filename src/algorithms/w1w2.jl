@@ -117,8 +117,10 @@ end
 
 # function _W_impl(h::Vector)
 # 	h2 = copy(h)
-# 	h2[1] = SparseMPOTensor(h[1].Os[1:1, :], h[1].leftspaces[1:1], h[1].rightspaces, h[1].pspace)
-# 	h2[end] = SparseMPOTensor(h[end].Os[:, 1:1], h[end].leftspaces, h[end].rightspaces[1:1], h[end].pspace)
+# 	# h2[1] = SparseMPOTensor(h[1].Os[1:1, :], h[1].leftspaces[1:1], h[1].rightspaces, h[1].pspace)
+# 	# h2[end] = SparseMPOTensor(h[end].Os[:, 1:1], h[end].leftspaces, h[end].rightspaces[1:1], h[end].pspace)
+# 	h2[1] = h[1][1,:]
+# 	h2[end] = h[end][:,1]
 # 	return MPOHamiltonian(h2)
 # end
 

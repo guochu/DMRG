@@ -3,10 +3,10 @@
 using Test, Random
 using SphericalTensors
 
-# push!(LOAD_PATH, dirname(Base.@__DIR__) * "/src")
-# using DMRG
+push!(LOAD_PATH, dirname(Base.@__DIR__) * "/src")
+using DMRG
 
-include("../src/includes.jl")
+# include("../src/includes.jl")
 
 include("util.jl")
 

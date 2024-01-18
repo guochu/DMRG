@@ -63,9 +63,17 @@ Base.getindex(x::MPOHamiltonian, i::Colon, j::Int, k::Int) = [getindex(x, i,j,k)
 # 	return r
 # end 
 
+space_l(x::MPOHamiltonian{<:SchurMPOTensor}) = x[1].leftspaces[1]
+space_r(x::MPOHamiltonian{<:SchurMPOTensor}) = (x[end].rightspaces[end])'
 
-space_l(x::MPOHamiltonian) = x[1].leftspaces[1]
-space_r(x::MPOHamiltonian) = (x[end].rightspaces[end])'
+function space_l(x::MPOHamiltonian)
+	(size(x[1], 1) == 1) || throw(ArgumentError("leftspace is not unique"))
+	x[1].leftspaces[1]
+end 
+function space_r(x::MPOHamiltonian)
+	(size(x[end], 2)) || throw(ArgumentError("rightspace is not unique"))
+	(x[end].rightspaces[end])'
+end 
 
 bond_dimension(h::MPOHamiltonian, bond::Int) = begin
 	((bond >= 1) && (bond <= length(h))) || throw(BoundsError(h.data, bond))
@@ -108,7 +116,7 @@ function _tompo(h::MPOHamiltonian, leftrow::Int, rightcol::Int)
 	S = spacetype(h)
 
 	mpotensors = Vector{mpotensortype(S, T)}(undef, L)
-	embedders = [right_embedders(T, h[i].rightspaces...) for i in 1:length(h)]
+	embedders = [right_embedders(T, h[i].rightspaces...) for i in 1:length(h)-1]
 
 	tmp = TensorMap(zeros, T, oneunit(S)*h[1].pspace ← space(embedders[1][1], 2)' * h[1].pspace )
 	for i in 1:length(embedders[1])
@@ -127,7 +135,7 @@ function _tompo(h::MPOHamiltonian, leftrow::Int, rightcol::Int)
 		end
 		mpotensors[n] = tmp
 	end
-	tmp = TensorMap(zeros, T, space(embedders[L-1][1], 2)' * h[L].pspace, space_r(h)' * h[L].pspace )
+	tmp = TensorMap(zeros, T, space(embedders[L-1][1], 2)' * h[L].pspace, h[L].rightspaces[rightcol] * h[L].pspace )
 	# _a = size(h[L], 2)
 	for i in 1:size(h[L], 1)
 		@tensor tmp[-1, -2, -3, -4] += conj(embedders[L-1][i][1, -1]) * h[L, i, rightcol][1,-2,-3,-4]
