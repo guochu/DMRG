@@ -22,7 +22,7 @@ using KrylovKit
 using SphericalTensors: QR, LQ, SVD, SDD
 const TK = SphericalTensors
 
-using LinearAlgebra: LinearAlgebra, Symmetric, eigen, Diagonal
+using LinearAlgebra: LinearAlgebra, Symmetric, eigen, qr, pinv, eigvals
 
 # auxiliary
 include("auxiliary/periodicarray.jl")
@@ -60,6 +60,8 @@ include("mpohamiltonian/mpohamiltonian.jl")
 include("mpohamiltonian/transfer.jl")
 include("mpohamiltonian/arithmetics.jl")
 include("mpohamiltonian/constructor.jl")
+# schurmpo and sparsempo
+include("mpohamiltonian/schurmpo/schurmpo.jl")
 
 
 # environments

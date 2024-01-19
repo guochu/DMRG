@@ -3,16 +3,6 @@ println("----------|    DMRG    |------------")
 println("------------------------------------")
 
 
-function do_dmrg(dmrg, alg)
-	dmrg_sweeps = 5
-	# Evals, delta = compute!(dmrg, alg)
-	Evals = Float64[]
-	for i in 1:dmrg_sweeps
-		Evals, delta = sweep!(dmrg, alg)
-	end
-	return Evals[end]
-end
-
 @testset "DMRG with MPO: comparison with ED" begin
 	J = 1.
 	J2 = 1.2

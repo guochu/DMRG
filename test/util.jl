@@ -231,3 +231,13 @@ get_trivial_leg(m::AbstractTensorMap) = TensorMap(ones,scalartype(m),oneunit(spa
 # 	@tensor m4[-1 -2; -3 -4] := util[-1] * m[-2, -4] * conj(util[-3])
 # 	return m4
 # end
+
+function do_dmrg(dmrg, alg)
+	dmrg_sweeps = 10
+	# Evals, delta = compute!(dmrg, alg)
+	Evals = Float64[]
+	for i in 1:dmrg_sweeps
+		Evals, delta = sweep!(dmrg, alg)
+	end
+	return Evals[end]
+end

@@ -31,6 +31,9 @@ export compress!, SVDCompression, Deparallelise, MPOCompression
 # mpohamiltonian
 export sparsempotensoreltype, AbstractSparseMPOTensor
 export SchurMPOTensor, SparseMPOTensor, MPOHamiltonian, SchurMPO, SparseMPO, fromABCD
+# schurmpo
+export ExponentialExpansionAlgorithm, PronyExpansion, exponential_expansion, expansion_error
+export ExponentialDecayTerm, GenericDecayTerm, PowerlawDecayTerm
 
 # environments
 export environments, leftenv, rightenv, value
@@ -69,7 +72,7 @@ using KrylovKit
 using SphericalTensors: QR, LQ, SVD, SDD
 const TK = SphericalTensors
 
-using LinearAlgebra: LinearAlgebra, Symmetric, eigen, Diagonal
+using LinearAlgebra: LinearAlgebra, Symmetric, eigen, qr, pinv, eigvals
 
 # auxiliary
 include("auxiliary/periodicarray.jl")
@@ -107,6 +110,8 @@ include("mpohamiltonian/mpohamiltonian.jl")
 include("mpohamiltonian/transfer.jl")
 include("mpohamiltonian/arithmetics.jl")
 include("mpohamiltonian/constructor.jl")
+# schurmpo and sparsempo
+include("mpohamiltonian/schurmpo/schurmpo.jl")
 
 
 # environments
