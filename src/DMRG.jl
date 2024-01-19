@@ -44,7 +44,7 @@ export DMRG1, DMRG2, DMRG1S, TDVP1, TDVP2, TDVP1S, leftsweep!, rightsweep!, swee
 export TransferMatrix, ac_prime, ac2_prime
 export SubspaceExpansionScheme, OptimalExpansion
 export MPSAlgorithm, DMRGAlgorithm, TDVPAlgorithm
-export timeevompo, WI, WII, complex_stepper
+export timeevompo, WI, WII, ComplexStepper, FirstOrderStepper, complex_stepper
 export ED, exact_diagonalization, exact_timeevolution!, exact_timeevolution
 
 

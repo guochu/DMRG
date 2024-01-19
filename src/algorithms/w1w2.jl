@@ -1,14 +1,20 @@
 # arXiv:1407.1832v1 "Time-evolving a matrix product state with long-ranged interactions"
 abstract type TimeEvoMPOAlgorithm <: MPSAlgorithm end
+abstract type FirstOrderStepper <: TimeEvoMPOAlgorithm end
+abstract type SecondOrderStepper <: TimeEvoMPOAlgorithm end
 
-@with_kw struct WI <: TimeEvoMPOAlgorithm
+@with_kw struct WI <: FirstOrderStepper
 	tol::Float64 = Defaults.tol
 	maxiter::Int = Defaults.maxiter
 end
 
-@with_kw struct WII <: TimeEvoMPOAlgorithm
+@with_kw struct WII <: FirstOrderStepper
 	tol::Float64 = Defaults.tol
 	maxiter::Int = Defaults.maxiter
+end
+
+struct ComplexStepper{F<:FirstOrderStepper} <: SecondOrderStepper
+	stepper::F
 end
 
 function get_A(x::SchurMPOTensor)
