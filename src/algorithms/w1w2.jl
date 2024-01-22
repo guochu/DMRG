@@ -131,7 +131,7 @@ end
 # end
 
 timeevompo(m::MPOHamiltonian{<:SchurMPOTensor}, dt::Number, alg::FirstOrderStepper) = MPOHamiltonian([timeevompo(mj, dt, alg) for mj in m.data])
-function timeevompo(h::MPOHamiltonian{<:SchurMPOTensor}, dt::Number, alg::ComplexStepper)
+function timeevompo(h::Union{SchurMPOTensor, MPOHamiltonian{<:SchurMPOTensor}}, dt::Number, alg::ComplexStepper)
 	dt1, dt2 = complex_stepper(dt)
 	return timeevompo(h, dt1, alg.stepper), timeevompo(h, dt2, alg.stepper)
 end
