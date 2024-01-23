@@ -63,12 +63,12 @@ function exponential_expansion(f::Vector{<:Number}, alg::PronyExpansion)
         xs, lambdas, err0 = hankel_exponential_expansion_n(f, n)
         err = expansion_error(f, xs, lambdas)
         if err <= tol
-            (verbosity > 1) && println("converged in $n iterations, error is $err")
+            (verbosity > 1) && println("PronyExpansion converged in $n iterations, error is $err")
             # println(xs, " ", lambdas)
             return xs, lambdas
         else
             if (n > 1) && (err >= errs[end])
-                (verbosity > 0) && println("stop at $n-th iteration due to error increase from $(errs[end]) to $err")
+                (verbosity > 0) && println("PronyExpansion stop at $n-th iteration due to error increase from $(errs[end]) to $err")
                 return results[end]
             else
                 push!(results, (xs, lambdas))
@@ -76,7 +76,7 @@ function exponential_expansion(f::Vector{<:Number}, alg::PronyExpansion)
             end
         end
         if n >= L-n+1
-            (verbosity > 0) && @warn "can not converge to $tol with size $L, try increase L, or decrease tol"
+            (verbosity > 0) && @warn "PronyExpansion can not converge to $tol with size $L, try increase L, or decrease tol"
             # println(xs, " ", lambdas)
             return xs, lambdas
         end
