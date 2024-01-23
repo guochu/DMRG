@@ -14,6 +14,12 @@ function expectation(psiA::AbstractFiniteMPS, h::MPO, psiB::AbstractFiniteMPS)
 end
 expectation(psiA::AbstractFiniteMPS, h::AdjointMPO, psiB::AbstractFiniteMPS) = conj(expectation(psiB, h.parent, psiA))
 expectation(h::MPO, psi::AbstractFiniteMPS) = expectation(psi, h, psi) 
+"""
+    expectationvalue(h::MPO, psi::AbstractFiniteMPS) 
+
+return expectation(h, psi) / dot(psi, psi)
+"""
+expectationvalue(h::Union{MPO, MPOHamiltonian}, psi::AbstractFiniteMPS) = expectation(h, psi) / dot(psi, psi)
 
 # partial MPO
 function expectation_canonical(m::PartialMPO, psi::MPS)
@@ -48,6 +54,7 @@ function expectation(psiA::AbstractFiniteMPS, m::PartialMPO, psiB::AbstractFinit
 end
 
 expectation(m::PartialMPO, psi::AbstractFiniteMPS, envs=environments(psi, psi)) = expectation(psi, m, psi, envs) 
+expectationvalue(m::PartialMPO, psi::AbstractFiniteMPS, envs=environments(psi, psi)) = expectation(m, psi, envs) / value(envs)
 
 """
     assume the underlying state is canonical
@@ -72,6 +79,23 @@ function _expectation_canonical(m::PartialMPO, psi::AbstractMPS)
     @tensor hnew[-1; -2] := conj(s[-1, 1]) * hold[3, 2, 1] * conj(util[2]) * s[-2, 3]
     return tr(hnew) 
 end
+
+function expectation(psiA::AbstractFiniteMPS, h::MPOHamiltonian, psiB::AbstractFiniteMPS)
+    (length(psiA) == length(psiB) == length(h)) || throw(DimensionMismatch())
+    hold = r_RR(psiA, h, psiB)
+    for i in length(psiA):-1:1
+        hold = updateright(hold, psiA[i], h[i], psiB[i])
+    end
+    hleft = l_LL(psiA, h, psiB)
+    (length(hleft) == length(hold)) || error("something wrong")
+    T = promote_type(scalartype(psiA), scalartype(h), scalartype(psiB))
+    r = zero(T)
+    for (a, b) in zip(hleft, hold)
+        r += @tensor tmp = a[1,2,3] * b[3,2,1]
+    end
+    return r 
+end
+expectation(h::MPOHamiltonian, psi::AbstractFiniteMPS) = expectation(psi, h, psi)
 
 
 get_trivial_leg(m::AbstractTensorMap) = TensorMap(ones,scalartype(m),oneunit(space(m,1)), one(space(m,1)))

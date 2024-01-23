@@ -1,16 +1,4 @@
-#default settings
-module Defaults
-	const maxiter = 100 # for DMRG iteration
-	const D = 100 # default bond dimension 
-	const tolgauge = 1e-14 # for MPS truncation
-	const tol = 1e-12 # for DMRG iteration
-	const tollanczos = 1.0e-10 # for lanczos eigensolver
-	const tolexp = 1.0e-8 # for local eigen in DMRG
-	const verbosity = 1
-end
-
 abstract type MPSAlgorithm end
-
 
 using Logging: @warn
 using Parameters, Printf
@@ -23,6 +11,9 @@ using SphericalTensors: QR, LQ, SVD, SDD
 const TK = SphericalTensors
 
 using LinearAlgebra: LinearAlgebra, Symmetric, eigen, qr, pinv, eigvals
+
+# defaults 
+include("defaults.jl")
 
 # auxiliary
 include("auxiliary/periodicarray.jl")
@@ -58,7 +49,6 @@ include("mpohamiltonian/sparsempotensor.jl")
 include("mpohamiltonian/schurmpotensor.jl")
 include("mpohamiltonian/mpohamiltonian.jl")
 include("mpohamiltonian/transfer.jl")
-include("mpohamiltonian/arithmetics.jl")
 include("mpohamiltonian/constructor.jl")
 # schurmpo and sparsempo
 include("mpohamiltonian/schurmpo/schurmpo.jl")

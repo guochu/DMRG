@@ -40,7 +40,7 @@ export ExponentialDecayTerm, GenericDecayTerm, PowerlawDecayTerm
 export environments, leftenv, rightenv, value
 
 # algorithms
-export expectation, expectation_canonical
+export expectation, expectationvalue, expectation_canonical
 export DMRG1, DMRG2, DMRG1S, TDVP1, TDVP2, TDVP1S, leftsweep!, rightsweep!, sweep!, compute!, ground_state!, ground_state
 export TransferMatrix, ac_prime, ac2_prime
 export SubspaceExpansionScheme, OptimalExpansion
@@ -49,19 +49,8 @@ export timeevompo, WI, WII, ComplexStepper, FirstOrderStepper, complex_stepper
 export ED, exact_diagonalization, exact_timeevolution!, exact_timeevolution
 
 
-#default settings
-module Defaults
-	const maxiter = 100 # for DMRG iteration
-	const D = 100 # default bond dimension 
-	const tolgauge = 1e-14 # for MPS truncation
-	const tol = 1e-12 # for DMRG iteration
-	const tollanczos = 1.0e-10 # for lanczos eigensolver
-	const tolexp = 1.0e-8 # for local eigen in DMRG
-	const verbosity = 1
-end
 
 abstract type MPSAlgorithm end
-
 
 using Logging: @warn
 using Parameters, Printf
@@ -74,6 +63,9 @@ using SphericalTensors: QR, LQ, SVD, SDD
 const TK = SphericalTensors
 
 using LinearAlgebra: LinearAlgebra, Symmetric, eigen, qr, pinv, eigvals
+
+# defaults 
+include("defaults.jl")
 
 # auxiliary
 include("auxiliary/periodicarray.jl")
@@ -109,7 +101,6 @@ include("mpohamiltonian/sparsempotensor.jl")
 include("mpohamiltonian/schurmpotensor.jl")
 include("mpohamiltonian/mpohamiltonian.jl")
 include("mpohamiltonian/transfer.jl")
-include("mpohamiltonian/arithmetics.jl")
 include("mpohamiltonian/constructor.jl")
 # schurmpo and sparsempo
 include("mpohamiltonian/schurmpo/schurmpo.jl")
