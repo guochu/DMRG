@@ -25,6 +25,16 @@ function TransferMatrix(x::Vector{M}, y::Vector{M}) where {M <: Union{MPSTensor,
 	return OverlapTransferMatrix(x, y)
 end
 
+# noticing the index order convention!!!
+function Base.convert(::Type{<:TensorMap}, x::OverlapTransferMatrix)
+	L = length(x)
+	@tensor left[1,4;3,5] := conj(x.above[1][1,2,3]) * x.below[1][4,2,5]
+	for i in 2:L
+		left = @tensor tmp[1,2;6,7] := left[1,2,3,4] * conj(x.above[i][3,5,6]) * x.below[i][4,5,7]
+	end
+	return left
+end
+
 struct ExpecTransferMatrix{M <: MPOTensor, V <: Union{MPSTensor, MPOTensor}}
 	above::Vector{V}
 	middle::Vector{M}
@@ -51,3 +61,4 @@ function TransferMatrix(above::Vector{V}, middle::Vector{<:MPOTensor}, below::Ve
 	@assert length(above) == length(middle) == length(below)
 	return ExpecTransferMatrix(above, middle, below)
 end
+
