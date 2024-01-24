@@ -1,5 +1,3 @@
-abstract type DMRGAlgorithm <: MPSAlgorithm end
-
 # function _eig_solver(f, x, maxiter::Int, tol::Real; verbosity::Int=0)
 # 	eigenvalue, eigenvec, info = simple_lanczos_solver(f, x, "SR", maxiter, tol, verbosity=verbosity)
 # 	return eigenvalue, eigenvec
@@ -99,6 +97,15 @@ end
 	trunc::TruncationDimCutoff = DefaultTruncation
 end
 
+function Base.getproperty(x::DMRG2, s::Symbol)
+	if s == :D
+		return x.trunc.D
+	elseif s == :ϵ
+		return x.trunc.ϵ
+	else
+		getfield(x, s)
+	end
+end
 
 function leftsweep!(m::ExpectationCache, alg::DMRG2)
 	mpo = m.mpo
@@ -169,6 +176,16 @@ end
 	verbosity::Int = Defaults.verbosity
 	trunc::TruncationDimCutoff = DefaultTruncation
 	expan::E = DefaultExpansion
+end
+
+function Base.getproperty(x::DMRG1S, s::Symbol)
+	if s == :D
+		return x.trunc.D
+	elseif s == :ϵ
+		return x.trunc.ϵ
+	else
+		getfield(x, s)
+	end
 end
 
 function leftsweep!(m::ExpectationCache, alg::DMRG1S)

@@ -1,0 +1,1 @@
+abstract type DMRGAlgorithm <: MPSAlgorithm end

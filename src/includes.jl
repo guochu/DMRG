@@ -41,7 +41,6 @@ include("mpo/initializers.jl")
 include("mpo/linalg.jl")
 include("mpo/deparallel.jl")
 include("mpo/orth.jl")
-include("mpo/compression.jl")
 
 # mpo hamiltonian
 include("mpohamiltonian/abstractmpotensor.jl")
@@ -58,6 +57,8 @@ include("mpohamiltonian/schurmpo/schurmpo.jl")
 include("envs/environments.jl")
 
 # algorithms
+include("algorithms/abstractdefs.jl")
+include("algorithms/compression.jl")
 include("algorithms/derivatives.jl")
 include("algorithms/transfermatrix.jl")
 include("algorithms/expecs.jl")

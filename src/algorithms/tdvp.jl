@@ -1,4 +1,4 @@
-abstract type TDVPAlgorithm <: MPSAlgorithm end
+abstract type TDVPAlgorithm <: DMRGAlgorithm end
 
 function _exp_evolve(f, dt, x, isherm::Bool, tol::Real)
 	tmp, info = exponentiate(f, dt, x, ishermitian=isherm, tol=tol/abs(dt))
@@ -78,7 +78,15 @@ end
 TDVP2(;tolexp::Float64=Defaults.tolexp, ishermitian::Bool=false, verbosity::Int=1, trunc::TruncationDimCutoff=DefaultTruncation, stepsize::Number) = TDVP2(
 	stepsize, tolexp, ishermitian, trunc, verbosity)
 
-
+function Base.getproperty(x::TDVP2, s::Symbol)
+	if s == :D
+		return x.trunc.D
+	elseif s == :ϵ
+		return x.trunc.ϵ
+	else
+		getfield(x, s)
+	end
+end
 
 function _leftsweep!(m::ExpectationCache, alg::TDVP2)
 	mpo = m.mpo
@@ -154,6 +162,15 @@ TDVP1S(; tolexp::Float64=Defaults.tolexp, ishermitian::Bool=false, verbosity::In
 	trunc::TruncationDimCutoff=DefaultTruncation, expan::SubspaceExpansionScheme=DefaultExpansion) = TDVP1S(
 	stepsize, tolexp, ishermitian, trunc, expan, verbosity)
 
+function Base.getproperty(x::TDVP1S, s::Symbol)
+	if s == :D
+		return x.trunc.D
+	elseif s == :ϵ
+		return x.trunc.ϵ
+	else
+		getfield(x, s)
+	end
+end
 
 function _leftsweep!(m::ExpectationCache, alg::TDVP1S)
 	mpo = m.mpo

@@ -27,7 +27,6 @@ export ExactMPS
 # mpo
 export AbstractMPO, AbstractFiniteMPO, MPO, PartialMPO, AdjointMPO, prodmpo, randommpo, positions, apply!
 export leftdeparallel!, rightdeparallel!, deparallel!, deparallel
-export compress!, SVDCompression, Deparallelise, MPOCompression
 
 # mpohamiltonian
 export sparsempotensoreltype, AbstractSparseMPOTensor
@@ -40,11 +39,12 @@ export ExponentialDecayTerm, GenericDecayTerm, PowerlawDecayTerm
 export environments, leftenv, rightenv, value
 
 # algorithms
+export MPSAlgorithm, DMRGAlgorithm, TDVPAlgorithm
+export compress!, SVDCompression, Deparallelise
 export expectation, expectationvalue, expectation_canonical
 export DMRG1, DMRG2, DMRG1S, TDVP1, TDVP2, TDVP1S, leftsweep!, rightsweep!, sweep!, compute!, ground_state!, ground_state
 export TransferMatrix, ac_prime, ac2_prime
 export SubspaceExpansionScheme, OptimalExpansion
-export MPSAlgorithm, DMRGAlgorithm, TDVPAlgorithm
 export timeevompo, WI, WII, ComplexStepper, FirstOrderStepper, complex_stepper
 export ED, exact_diagonalization, exact_timeevolution!, exact_timeevolution
 
@@ -93,7 +93,6 @@ include("mpo/initializers.jl")
 include("mpo/linalg.jl")
 include("mpo/deparallel.jl")
 include("mpo/orth.jl")
-include("mpo/compression.jl")
 
 # mpo hamiltonian
 include("mpohamiltonian/abstractmpotensor.jl")
@@ -110,6 +109,8 @@ include("mpohamiltonian/schurmpo/schurmpo.jl")
 include("envs/environments.jl")
 
 # algorithms
+include("algorithms/abstractdefs.jl")
+include("algorithms/compression.jl")
 include("algorithms/derivatives.jl")
 include("algorithms/transfermatrix.jl")
 include("algorithms/expecs.jl")
