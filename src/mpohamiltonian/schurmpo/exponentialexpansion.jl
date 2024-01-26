@@ -1,11 +1,12 @@
 abstract type ExponentialExpansionAlgorithm end
 
 # hankel expansion
-struct PronyExpansion <: ExponentialExpansionAlgorithm 
+struct PronyExpansion <: ExponentialExpansionAlgorithm
+    n::Int 
     tol::Float64
     verbosity::Int
 end
-PronyExpansion(; tol::Real = 1.0e-8, verbosity::Int=1) = PronyExpansion(convert(Float64, tol), verbosity)
+PronyExpansion(; n::Int=10, tol::Real = 1.0e-8, verbosity::Int=1) = PronyExpansion(n, convert(Float64, tol), verbosity)
 function generate_Fmat(fvec::Vector{<:Number}, n::Int)
     L = length(fvec)
     (L >= n) || error("number of sites must be larger than number of terms in expansion")
@@ -53,35 +54,56 @@ function hankel_exponential_expansion(fmat::AbstractMatrix)
 end
 
 hankel_exponential_expansion_n(f::Vector{<:Number}, n::Int) = hankel_exponential_expansion(generate_Fmat(f, n))
+# function exponential_expansion(f::Vector{<:Number}, alg::PronyExpansion)
+#     L = length(f)
+#     results = []
+#     errs = Float64[]
+#     tol = alg.tol
+#     verbosity = alg.verbosity
+#     for n in 1:L
+#         xs, lambdas, err0 = hankel_exponential_expansion_n(f, n)
+#         err = expansion_error(f, xs, lambdas)
+#         if err <= tol
+#             (verbosity > 1) && println("PronyExpansion converged in $n iterations, error is $err")
+#             # println(xs, " ", lambdas)
+#             return xs, lambdas
+#         else
+#             if (n > 1) && (err >= errs[end])
+#                 (verbosity > 0) && println("PronyExpansion stop at $n-th iteration due to error increase from $(errs[end]) to $err")
+#                 return results[end]
+#             else
+#                 push!(results, (xs, lambdas))
+#                 push!(errs, err)
+#             end
+#         end
+#         if n >= L-n+1
+#             (verbosity > 0) && @warn "PronyExpansion can not converge to $tol with size $L, try increase L, or decrease tol"
+#             # println(xs, " ", lambdas)
+#             return xs, lambdas
+#         end
+#     end
+#     error("can not find a good approximation")
+# end
 function exponential_expansion(f::Vector{<:Number}, alg::PronyExpansion)
     L = length(f)
-    results = []
-    errs = Float64[]
     tol = alg.tol
     verbosity = alg.verbosity
-    for n in 1:L
+    maxiter = alg.n
+    for n in 1:min(maxiter, L)
         xs, lambdas, err0 = hankel_exponential_expansion_n(f, n)
         err = expansion_error(f, xs, lambdas)
         if err <= tol
             (verbosity > 1) && println("PronyExpansion converged in $n iterations, error is $err")
             # println(xs, " ", lambdas)
             return xs, lambdas
-        else
-            if (n > 1) && (err >= errs[end])
-                (verbosity > 0) && println("PronyExpansion stop at $n-th iteration due to error increase from $(errs[end]) to $err")
-                return results[end]
-            else
-                push!(results, (xs, lambdas))
-                push!(errs, err)
-            end
         end
         if n >= L-n+1
-            (verbosity > 0) && @warn "PronyExpansion can not converge to $tol with size $L, try increase L, or decrease tol"
+            (verbosity > 0) && @warn "can not find a good approximation with n=$(maxiter), tol=$(tol), try increase L, or decrease tol"
             # println(xs, " ", lambdas)
             return xs, lambdas
         end
     end
-    error("can not find a good approximation")
+    @warn "can not find a good approximation with n=$(maxiter), tol=$(tol), try increase L, or decrease tol"
 end
 
 function _predict(x, p)
