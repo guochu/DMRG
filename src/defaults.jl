@@ -8,3 +8,5 @@ module Defaults
 	const tolexp = 1.0e-8 # for local eigen in DMRG
 	const verbosity = 1
 end
+
+const DefaultTruncation = truncdimcutoff(D=Defaults.D, ϵ=Defaults.tolgauge, add_back=0)

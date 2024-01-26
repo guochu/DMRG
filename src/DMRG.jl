@@ -69,7 +69,6 @@ include("defaults.jl")
 
 # auxiliary
 include("auxiliary/periodicarray.jl")
-include("auxiliary/truncation.jl")
 include("auxiliary/deparallel.jl")
 include("auxiliary/simple_lanczos.jl")
 include("auxiliary/linalg.jl")

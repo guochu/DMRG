@@ -19,6 +19,7 @@ end
 
 @with_kw struct DMRG1 <: DMRGAlgorithm 
 	D::Int = Defaults.D
+	tolgauge::Float64 = Defaults.tolgauge
 	maxiter::Int = Defaults.maxiter
 	tol::Float64 = Defaults.tol
 	maxitereig::Int = 10
@@ -26,8 +27,17 @@ end
 	verbosity::Int = Defaults.verbosity
 end
 
-Base.similar(x::DMRG1; D::Int=x.D, maxiter::Int=x.maxiter, tol::Float64=x.tol, maxitereig::Int=x.maxitereig, toleig::Float64=x.toleig, verbosity::Int=x.verbosity) = DMRG1(
-			D=D, maxiter=maxiter, tol=tol, maxitereig=maxitereig, toleig=toleig, verbosity=verbosity)
+function Base.getproperty(x::DMRG1, s::Symbol)
+	if s == :trunc
+		return truncdimcutoff(D=x.D, ϵ=x.tolgauge, add_back=0)
+	else
+		getfield(x, s)
+	end
+end
+
+Base.similar(x::DMRG1; D::Int=x.D, tolgauge::Float64=x.tolgauge, maxiter::Int=x.maxiter, tol::Float64=x.tol, maxitereig::Int=x.maxitereig, 
+			toleig::Float64=x.toleig, verbosity::Int=x.verbosity) = DMRG1(
+			D=D, tolgauge=tolgauge, maxiter=maxiter, tol=tol, maxitereig=maxitereig, toleig=toleig, verbosity=verbosity)
 
 function calc_galerkin(m::Union{ExpectationCache, ProjectedExpectationCache}, site::Int)
 	mpsj = m.mps[site]
