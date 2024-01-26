@@ -89,7 +89,8 @@ function exponential_expansion(f::Vector{<:Number}, alg::PronyExpansion)
     tol = alg.tol
     verbosity = alg.verbosity
     maxiter = alg.n
-    for n in 1:min(maxiter, L)
+    nitr = min(maxiter, L)
+    for n in 1:nitr
         xs, lambdas, err0 = hankel_exponential_expansion_n(f, n)
         err = expansion_error(f, xs, lambdas)
         if err <= tol
@@ -97,13 +98,14 @@ function exponential_expansion(f::Vector{<:Number}, alg::PronyExpansion)
             # println(xs, " ", lambdas)
             return xs, lambdas
         end
-        if n >= L-n+1
+        if n >= min(L-n+1, nitr)
             (verbosity > 0) && @warn "can not find a good approximation with n=$(maxiter), tol=$(tol), try increase L, or decrease tol"
             # println(xs, " ", lambdas)
             return xs, lambdas
         end
     end
-    @warn "can not find a good approximation with n=$(maxiter), tol=$(tol), try increase L, or decrease tol"
+    error("can not be here")
+    # @warn "can not find a good approximation with n=$(maxiter), tol=$(tol), try increase L, or decrease tol"
 end
 
 function _predict(x, p)
