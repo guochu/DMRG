@@ -99,7 +99,7 @@ function exponential_expansion(f::Vector{<:Number}, alg::PronyExpansion)
             return xs, lambdas
         end
         if n >= min(L-n+1, nitr)
-            (verbosity > 0) && @warn "can not find a good approximation with n=$(maxiter), tol=$(tol), try increase L, or decrease tol"
+            (verbosity > 0) && @warn "can not find a good approximation with L=$(L), n=$(alg.n), tol=$(tol), return with error $err"
             # println(xs, " ", lambdas)
             return xs, lambdas
         end
