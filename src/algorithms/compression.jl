@@ -11,10 +11,13 @@ end
 end
 
 SVDCompression(trunc::TruncationDimCutoff) = SVDCompression(D=trunc.D, tol=trunc.ϵ)
+Base.similar(x::SVDCompression; D::Int=x.D, tol::Float64=x.tol, verbosity::Int=x.verbosity) = SVDCompression(D=D, tol=tol, verbosity=verbosity)
 
 function Base.getproperty(x::SVDCompression, s::Symbol)
 	if s == :trunc
 		return get_trunc(x)
+	elseif s == :ϵ
+		return x.tol
 	else
 		getfield(x, s)
 	end

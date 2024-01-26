@@ -26,6 +26,9 @@ end
 	verbosity::Int = Defaults.verbosity
 end
 
+Base.similar(x::DMRG1; D::Int=x.D, maxiter::Int=x.maxiter, tol::Float64=x.tol, maxitereig::Int=x.maxitereig, toleig::Float64=x.toleig, verbosity::Int=x.verbosity) = DMRG1(
+			D=D, maxiter=maxiter, tol=tol, maxitereig=maxitereig, toleig=toleig, verbosity=verbosity)
+
 function calc_galerkin(m::Union{ExpectationCache, ProjectedExpectationCache}, site::Int)
 	mpsj = m.mps[site]
 	try
@@ -96,6 +99,9 @@ end
 	verbosity::Int = Defaults.verbosity
 	trunc::TruncationDimCutoff = DefaultTruncation
 end
+
+Base.similar(x::DMRG2; trunc::TruncationDimCutoff=x.trunc, maxiter::Int=x.maxiter, tol::Float64=x.tol, maxitereig::Int=x.maxitereig, toleig::Float64=x.toleig, verbosity::Int=x.verbosity) = DMRG2(
+			trunc=trunc, maxiter=maxiter, tol=tol, maxitereig=maxitereig, toleig=toleig, verbosity=verbosity)
 
 function Base.getproperty(x::DMRG2, s::Symbol)
 	if s == :D
@@ -177,6 +183,11 @@ end
 	trunc::TruncationDimCutoff = DefaultTruncation
 	expan::E = DefaultExpansion
 end
+
+Base.similar(x::DMRG1S; trunc::TruncationDimCutoff=x.trunc, expan::SubspaceExpansionScheme=x.expan, maxiter::Int=x.maxiter, tol::Float64=x.tol, 
+			maxitereig::Int=x.maxitereig, toleig::Float64=x.toleig, verbosity::Int=x.verbosity) = DMRG1S(
+			trunc=trunc, expan=x.expan, maxiter=maxiter, tol=tol, maxitereig=maxitereig, toleig=toleig, verbosity=verbosity)
+
 
 function Base.getproperty(x::DMRG1S, s::Symbol)
 	if s == :D
