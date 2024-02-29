@@ -35,7 +35,7 @@ Kyward arguments:
 * trunc=NoTruncation(): truncation strategy
 """
 canonicalize!(psi::MPS; kwargs...) = rightcanonicalize!(psi; kwargs...)
-
+canonicalize(psi::MPS; kwargs...) = canonicalize!(deepcopy(psi); kwargs...)
 
 TK.leftorth!(psi::MPS; alg::Orthogonalize = Orthogonalize()) = _leftorth!(psi, alg.orth, alg.trunc, alg.normalize)
 function _leftorth!(psi::MPS, alg::QR, trunc::TruncationScheme, normalize::Bool)

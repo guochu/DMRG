@@ -1,4 +1,4 @@
-
+canonicalize(h::MPO; kwargs...) = canonicalize!(copy(h); kwargs...)
 function canonicalize!(h::MPO; alg::Orthogonalize = Orthogonalize(SVD(), DefaultTruncation, normalize=false))
 	_leftorth!(h, QR(), TK.NoTruncation(), alg.normalize)
 	return rightorth!(h, alg=alg)

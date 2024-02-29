@@ -16,7 +16,7 @@ export stable_tsvd, stable_tsvd!
 
 # mps
 export AbstractMPS, AbstractFiniteMPS, MPSTensor, MPOTensor, MPSBondTensor, SiteOperator, bondtensortype, mpstensortype, mpotensortype
-export MPS, canonicalize!,leftorth!, rightorth!, Orthogonalize
+export MPS, canonicalize, canonicalize!, leftorth!, rightorth!, Orthogonalize
 export isleftcanonical, isrightcanonical, iscanonical, svectors_uninitialized, unset_svectors!
 export bond_dimension, bond_dimensions, distance, space_l, space_r, l_LL, r_RR, isstrict, isoneunit, sector
 export ophysical_space, iphysical_space, physical_space, physical_spaces, prodmps, randommps, renyi_entropies
