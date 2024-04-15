@@ -71,7 +71,7 @@ function space_l(x::MPOHamiltonian)
 	x[1].leftspaces[1]
 end 
 function space_r(x::MPOHamiltonian)
-	(size(x[end], 2)) || throw(ArgumentError("rightspace is not unique"))
+	(size(x[end], 2) == 1) || throw(ArgumentError("rightspace is not unique"))
 	(x[end].rightspaces[end])'
 end 
 
