@@ -33,20 +33,21 @@ function prony(x::Vector, p::Int)
     # find the coefficient
     A = zeros(typeof(z[1]), p, p)
     for i = 1:p, j = 1:p
-        A[i,j] = z[j]^(i-1)
+        A[i,j] = z[j]^i
     end
     α = A\x[1:p]
 
     # compute the error
     y = zeros(typeof(α[1]), n)
     for i = 1:n, k = 1:p
-        y[i] += α[k]*z[k]^(i-1)
+        y[i] += α[k]*z[k]^i
     end
     E = norm(x-y)
         
     α, z, E
 end
 
+# least square version
 function lsq_prony(x::Vector, p::Int)
     n = length(x)
     @assert p <= n÷2 "p can not exceed length(x)/2"
@@ -63,30 +64,30 @@ function lsq_prony(x::Vector, p::Int)
     # find the coefficient via least square method
     A = zeros(typeof(z[1]), n, p)
     for i = 1:n, j = 1:p
-        A[i,j] = z[j]^(i-1)
+        A[i,j] = z[j]^i
     end
     α = A\x
 
     # compute the error
     y = zeros(typeof(α[1]), n)
     for i = 1:n, k = 1:p
-        y[i] += α[k]*z[k]^(i-1)
+        y[i] += α[k]*z[k]^i
     end
     E = norm(x-y)
         
     α, z, E
 end
 
-_exponential_expansion_n(f::Vector, p::Int, alg::PronyExpansion) = lsq_prony(f, p)
-_exponential_expansion_n(f::Vector, p::Int, alg::DetPronyExpansion) = prony(f, p)
+exponential_expansion_n(f::Vector, p::Int, alg::PronyExpansion) = lsq_prony(f, p)
+exponential_expansion_n(f::Vector, p::Int, alg::DetPronyExpansion) = prony(f, p)
 
-function exponential_expansion_n(f::Vector, p::Int, alg::AbstractPronyExpansion)
-    α, z, E = _exponential_expansion_n(f, p, alg)
-    for i in 1:length(α)
-        α[i] /= z[i]
-    end
-    return α, z, E
-end
+# function exponential_expansion_n(f::Vector, p::Int, alg::AbstractPronyExpansion)
+#     α, z, E = _exponential_expansion_n(f, p, alg)
+#     for i in 1:length(α)
+#         α[i] /= z[i]
+#     end
+#     return α, z, E
+# end
 
 function exponential_expansion(f::Vector{<:Number}, alg::AbstractPronyExpansion)
     L = length(f)
