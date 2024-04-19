@@ -32,7 +32,8 @@ export leftdeparallel!, rightdeparallel!, deparallel!, deparallel
 export sparsempotensoreltype, AbstractSparseMPOTensor
 export SchurMPOTensor, SparseMPOTensor, MPOHamiltonian, SchurMPO, SparseMPO, fromABCD
 # schurmpo
-export ExponentialExpansionAlgorithm, PronyExpansion, exponential_expansion, expansion_error
+export ExponentialExpansionAlgorithm, AbstractPronyExpansion, DetPronyExpansion, PronyExpansion
+export exponential_expansion, expansion_error, prony, lsq_prony
 export ExponentialDecayTerm, GenericDecayTerm, PowerlawDecayTerm
 
 # environments
@@ -53,7 +54,7 @@ export ED, exact_diagonalization, exact_timeevolution!, exact_timeevolution
 abstract type MPSAlgorithm end
 
 using Logging: @warn
-using Parameters, Printf
+using Parameters, Printf, Polynomials
 
 using Reexport
 using TupleTools

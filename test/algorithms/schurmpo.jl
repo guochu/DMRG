@@ -142,8 +142,10 @@ end
 	for alpha in (-2, -2.5, -3)
 		xdata = [convert(Float64, i) for i in 1:L]
 		ydata = [1.3 * x^alpha for x in xdata]
-		xs1, lambdas1 = exponential_expansion(ydata, PronyExpansion(tol=atol))
+		xs1, lambdas1 = exponential_expansion(ydata, PronyExpansion(n=20,tol=atol))
 		@test expansion_error(ydata, xs1, lambdas1) < atol
+		xs2, lambdas2 = exponential_expansion(ydata, DetPronyExpansion(n=20,tol=atol))
+		@test expansion_error(ydata, xs2, lambdas2) < atol
 		# xs2, lambdas2 = exponential_expansion(ydata, LsqExpansion(atol=atol))
 		# @test expansion_error(ydata, xs2, lambdas2) < atol
 	end

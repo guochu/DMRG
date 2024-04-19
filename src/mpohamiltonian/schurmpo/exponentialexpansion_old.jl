@@ -1,101 +1,97 @@
 abstract type ExponentialExpansionAlgorithm end
-abstract type AbstractPronyExpansion <: ExponentialExpansionAlgorithm end
 
 # hankel expansion
-struct PronyExpansion <: AbstractPronyExpansion
+struct PronyExpansion <: ExponentialExpansionAlgorithm
     n::Int 
     tol::Float64
     verbosity::Int
 end
 PronyExpansion(; n::Int=10, tol::Real = 1.0e-8, verbosity::Int=1) = PronyExpansion(n, convert(Float64, tol), verbosity)
-
-struct DetPronyExpansion <: AbstractPronyExpansion
-    n::Int 
-    tol::Float64
-    verbosity::Int
-end
-DetPronyExpansion(; n::Int=10, tol::Real = 1.0e-8, verbosity::Int=1) = DetPronyExpansion(n, convert(Float64, tol), verbosity)
-
-
-function prony(x::Vector, p::Int)
-    n = length(x)
-    @assert p <= n÷2 "p can not exceed length(x)/2"
-
-    # find the roots of characteristic polynomial
-    A = zeros(typeof(x[1]), p, p)
-    for i = 1:p, j = 1:p
-        A[i,j] = x[p+i-j]
+function generate_Fmat(fvec::Vector{<:Number}, n::Int)
+    L = length(fvec)
+    (L >= n) || error("number of sites must be larger than number of terms in expansion")
+    F = zeros(eltype(fvec), L-n+1, n)
+    for j in 1:n
+        for i in 1:L-n+1
+            F[i, j] = fvec[i + j - 1]
+        end
     end
-    a = -A\x[p+1:2p]
-    pushfirst!(a,1)
-    z = roots(Polynomial(reverse(a)))
-
-    # find the coefficient
-    A = zeros(typeof(z[1]), p, p)
-    for i = 1:p, j = 1:p
-        A[i,j] = z[j]^(i-1)
-    end
-    α = A\x[1:p]
-
-    # compute the error
-    y = zeros(typeof(α[1]), n)
-    for i = 1:n, k = 1:p
-        y[i] += α[k]*z[k]^(i-1)
-    end
-    E = norm(x-y)
-        
-    α, z, E
+    return F
 end
 
-function lsq_prony(x::Vector, p::Int)
-    n = length(x)
-    @assert p <= n÷2 "p can not exceed length(x)/2"
-    
-    # find the roots of characteristic polynomial via least square method
-    A = zeros(typeof(x[1]), n-p , p)
-    for i = 1:n-p, j = 1:p
-        A[i,j] = x[p+i-j]
-    end
-    a = -A\x[p+1:n]
-    pushfirst!(a,1)
-    z = roots(Polynomial(reverse(a)))
+generate_Fmat(f, L::Int, n::Int) = generate_Fmat([f(k) for k in 1:L], n)
 
-    # find the coefficient via least square method
-    A = zeros(typeof(z[1]), n, p)
-    for i = 1:n, j = 1:p
-        A[i,j] = z[j]^(i-1)
+function hankel_exponential_expansion(fmat::AbstractMatrix)
+    s1, n = size(fmat)
+    (s1 >= n) || error("wrong input, try increase L, or decrease tol")
+    L = s1 - 1 + n
+    _u, _v = qr(fmat)
+    U = Matrix(_u)
+    V = Matrix(_v)
+    U1 = U[1:L-n, :]
+    U2 = U[(s1-L+n+1):s1, :]
+    m = pinv(U1) * U2
+    lambdas = eigvals(m)
+    (length(lambdas) == n) || error("something wrong")
+    m = zeros(eltype(lambdas), L, n)
+    for j in 1:n
+        for i in 1:L
+            m[i, j] = lambdas[j]^i
+        end
     end
-    α = A\x
-
-    # compute the error
-    y = zeros(typeof(α[1]), n)
-    for i = 1:n, k = 1:p
-        y[i] += α[k]*z[k]^(i-1)
+    fvec = zeros(eltype(fmat), L)
+    for i in 1:n
+        fvec[i] = fmat[1, i]
     end
-    E = norm(x-y)
-        
-    α, z, E
+    for i in n+1:L
+        fvec[i] = fmat[i-n+1, n]
+    end
+    xs = m \ fvec
+    err = norm(m * xs - fvec)
+    # err = maximum(abs.(m * xs - fvec))
+    # println("norm error is ", norm(m * xs - fvec), " ", err)
+    return  xs, lambdas, err
 end
 
-_exponential_expansion_n(f::Vector, p::Int, alg::PronyExpansion) = lsq_prony(f, p)
-_exponential_expansion_n(f::Vector, p::Int, alg::DetPronyExpansion) = prony(f, p)
-
-function exponential_expansion_n(f::Vector, p::Int, alg::AbstractPronyExpansion)
-    α, z, E = _exponential_expansion_n(f, p, alg)
-    for i in 1:length(α)
-        α[i] /= z[i]
-    end
-    return α, z, E
-end
-
-function exponential_expansion(f::Vector{<:Number}, alg::AbstractPronyExpansion)
+hankel_exponential_expansion_n(f::Vector{<:Number}, n::Int) = hankel_exponential_expansion(generate_Fmat(f, n))
+# function exponential_expansion(f::Vector{<:Number}, alg::PronyExpansion)
+#     L = length(f)
+#     results = []
+#     errs = Float64[]
+#     tol = alg.tol
+#     verbosity = alg.verbosity
+#     for n in 1:L
+#         xs, lambdas, err0 = hankel_exponential_expansion_n(f, n)
+#         err = expansion_error(f, xs, lambdas)
+#         if err <= tol
+#             (verbosity > 1) && println("PronyExpansion converged in $n iterations, error is $err")
+#             # println(xs, " ", lambdas)
+#             return xs, lambdas
+#         else
+#             if (n > 1) && (err >= errs[end])
+#                 (verbosity > 0) && println("PronyExpansion stop at $n-th iteration due to error increase from $(errs[end]) to $err")
+#                 return results[end]
+#             else
+#                 push!(results, (xs, lambdas))
+#                 push!(errs, err)
+#             end
+#         end
+#         if n >= L-n+1
+#             (verbosity > 0) && @warn "PronyExpansion can not converge to $tol with size $L, try increase L, or decrease tol"
+#             # println(xs, " ", lambdas)
+#             return xs, lambdas
+#         end
+#     end
+#     error("can not find a good approximation")
+# end
+function exponential_expansion(f::Vector{<:Number}, alg::PronyExpansion)
     L = length(f)
     tol = alg.tol
     verbosity = alg.verbosity
     maxiter = alg.n
     nitr = min(maxiter, L)
     for n in 1:nitr
-        xs, lambdas, err0 = exponential_expansion_n(f, n, alg)
+        xs, lambdas, err0 = hankel_exponential_expansion_n(f, n)
         err = expansion_error(f, xs, lambdas)
         if err <= tol
             (verbosity > 1) && println("PronyExpansion converged in $n iterations, error is $err")

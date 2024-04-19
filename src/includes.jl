@@ -1,7 +1,7 @@
 abstract type MPSAlgorithm end
 
 using Logging: @warn
-using Parameters, Printf
+using Parameters, Printf, Polynomials
 
 using Reexport
 using TupleTools
