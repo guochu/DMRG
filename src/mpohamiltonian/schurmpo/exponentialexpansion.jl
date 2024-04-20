@@ -37,14 +37,14 @@ function prony(x::Vector, p::Int)
     end
     α = A\x[1:p]
 
-    # compute the error
-    y = zeros(typeof(α[1]), n)
-    for i = 1:n, k = 1:p
-        y[i] += α[k]*z[k]^i
-    end
-    E = norm(x-y)
+    # # compute the error
+    # y = zeros(typeof(α[1]), n)
+    # for i = 1:n, k = 1:p
+    #     y[i] += α[k]*z[k]^i
+    # end
+    # E = norm(x-y)
         
-    α, z, E
+    α, z
 end
 
 # least square version
@@ -68,14 +68,14 @@ function lsq_prony(x::Vector, p::Int)
     end
     α = A\x
 
-    # compute the error
-    y = zeros(typeof(α[1]), n)
-    for i = 1:n, k = 1:p
-        y[i] += α[k]*z[k]^i
-    end
-    E = norm(x-y)
+    # # compute the error
+    # y = zeros(typeof(α[1]), n)
+    # for i = 1:n, k = 1:p
+    #     y[i] += α[k]*z[k]^i
+    # end
+    # E = norm(x-y)
         
-    α, z, E
+    α, z
 end
 
 exponential_expansion_n(f::Vector, p::Int, alg::PronyExpansion) = lsq_prony(f, p)
@@ -96,7 +96,7 @@ function exponential_expansion(f::Vector{<:Number}, alg::AbstractPronyExpansion)
     maxiter = alg.n
     nitr = min(maxiter, L)
     for n in 1:nitr
-        xs, lambdas, err0 = exponential_expansion_n(f, n, alg)
+        xs, lambdas = exponential_expansion_n(f, n, alg)
         err = expansion_error(f, xs, lambdas)
         if err <= tol
             (verbosity > 1) && println("PronyExpansion converged in $n iterations, error is $err")
