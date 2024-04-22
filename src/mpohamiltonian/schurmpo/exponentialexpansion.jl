@@ -90,6 +90,15 @@ exponential_expansion_n(f::Vector, p::Int, alg::DetPronyExpansion) = prony(f, p)
 # end
 
 function exponential_expansion(f::Vector{<:Number}, alg::AbstractPronyExpansion)
+    xs, lambdas = _exponential_expansion(f, alg)
+    if alg.verbosity > 2
+        println("Prony coefs: ", xs)
+        println("Prony roots: ", lambdas)
+    end
+    return xs, lambdas 
+end
+
+function _exponential_expansion(f::Vector{<:Number}, alg::AbstractPronyExpansion)
     L = length(f)
     tol = alg.tol
     verbosity = alg.verbosity
