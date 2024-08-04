@@ -4,17 +4,19 @@ abstract type AbstractPronyExpansion <: ExponentialExpansionAlgorithm end
 # hankel expansion
 struct PronyExpansion <: AbstractPronyExpansion
     n::Int 
+    stepsize::Int
     tol::Float64
     verbosity::Int
 end
-PronyExpansion(; n::Int=10, tol::Real = 1.0e-8, verbosity::Int=1) = PronyExpansion(n, convert(Float64, tol), verbosity)
+PronyExpansion(; n::Int=10, stepsize::Int=1, tol::Real = 1.0e-8, verbosity::Int=1) = PronyExpansion(n, stepsize, convert(Float64, tol), verbosity)
 
 struct DetPronyExpansion <: AbstractPronyExpansion
     n::Int 
+    stepsize::Int
     tol::Float64
     verbosity::Int
 end
-DetPronyExpansion(; n::Int=10, tol::Real = 1.0e-8, verbosity::Int=1) = DetPronyExpansion(n, convert(Float64, tol), verbosity)
+DetPronyExpansion(; n::Int=10, stepsize::Int=1, tol::Real = 1.0e-8, verbosity::Int=1) = DetPronyExpansion(n, stepsize, convert(Float64, tol), verbosity)
 
 
 function prony(x::Vector, p::Int)
@@ -90,7 +92,10 @@ exponential_expansion_n(f::Vector, p::Int, alg::DetPronyExpansion) = prony(f, p)
 # end
 
 function exponential_expansion(f::Vector{<:Number}, alg::AbstractPronyExpansion)
-    xs, lambdas = _exponential_expansion(f, alg)
+    xs, lambdas = _exponential_expansion_impl(f, alg)
+    if alg.stepsize != 1
+        expansion_changestepsize!(xs, lambdas, alg.stepsize)
+    end
     if alg.verbosity > 2
         println("Prony coefs: ", xs)
         println("Prony roots: ", lambdas)
@@ -98,7 +103,16 @@ function exponential_expansion(f::Vector{<:Number}, alg::AbstractPronyExpansion)
     return xs, lambdas 
 end
 
-function _exponential_expansion(f::Vector{<:Number}, alg::AbstractPronyExpansion)
+function expansion_changestepsize!(xs::Vector, lambdas::Vector, stepsize::Int)
+    α = 1.0/stepsize
+    for i in 1:length(lambdas)
+        xs[i] *= (lambdas[i])^(1-α)
+        lambdas[i] = (lambdas[i])^(α)
+    end    
+    return xs, lambdas
+end
+
+function _exponential_expansion_impl(f::Vector{<:Number}, alg::AbstractPronyExpansion)
     L = length(f)
     tol = alg.tol
     verbosity = alg.verbosity

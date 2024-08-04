@@ -149,6 +149,16 @@ end
 		# xs2, lambdas2 = exponential_expansion(ydata, LsqExpansion(atol=atol))
 		# @test expansion_error(ydata, xs2, lambdas2) < atol
 	end
+	L = 500
+	xdata = [convert(Float64, i) for i in 1:L]
+	ydata = [1.3 * 0.7^x + 0.7 * 0.5^x - 1.1 * 0.8^x + 0.1*0.95^x for x in xdata]
+	xs1, lambdas1 = exponential_expansion(ydata, PronyExpansion(n=20,tol=atol))
+	@test expansion_error(ydata, xs1, lambdas1) < atol
+	for stepsize in 2:6
+		xs2, lambdas2 = exponential_expansion(ydata[1:stepsize:L], PronyExpansion(n=20, stepsize=stepsize, tol=atol))
+		@test expansion_error(ydata, xs2, lambdas2) < atol
+	end
+	
 end
 
 @testset "MPOHamiltonian: long-range XXZ        " begin
