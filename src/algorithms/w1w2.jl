@@ -73,7 +73,8 @@ end
 
 function timeevompo(m::SchurMPOTensor, dt::Number, alg::WII)
 	s1, s2 = size(m)
-	T = mpotensortype(spacetype(m), promote_type(scalartype(m), scalartype(dt)))
+	_S = promote_type(scalartype(m), scalartype(dt))
+	T = mpotensortype(spacetype(m), _S)
 	WA = Matrix{T}(undef, s1-2, s2-2)
 	WB = Vector{T}(undef, s1-2)
 	WC = Vector{T}(undef, s2-2)
@@ -84,7 +85,7 @@ function timeevompo(m::SchurMPOTensor, dt::Number, alg::WII)
 	δ₁, δ₂ = _sqrt2(dt)
 	for j in 2:s1-1, k in 2:s2-1
 		init_1 = isometry(storagetype(D), codomain(D), domain(D))
-		init = [init_1, zero(m[1, k]), zero(m[j, end]), zero(m[j, k])]
+		init = [init_1, convert(T, zero(m[1, k])), convert(T, zero(m[j, end])), convert(T, zero(m[j, k]))]
 
 		(y, convhist) = exponentiate(1.0, RecursiveVec(init),
 									 Arnoldi(; tol=alg.tol, maxiter=alg.maxiter)) do x
