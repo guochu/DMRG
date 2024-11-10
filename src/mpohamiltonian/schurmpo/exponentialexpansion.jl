@@ -92,6 +92,7 @@ exponential_expansion_n(f::Vector, p::Int, alg::DetPronyExpansion) = prony(f, p)
 # end
 
 function exponential_expansion(f::Vector{<:Number}, alg::AbstractPronyExpansion)
+    (length(f) > 1) || throw(ArgumentError("length of data should be larger than 1"))
     xs, lambdas = _exponential_expansion_impl(f, alg)
     if alg.stepsize != 1
         expansion_changestepsize!(xs, lambdas, alg.stepsize)
