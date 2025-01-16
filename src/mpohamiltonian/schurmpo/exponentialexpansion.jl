@@ -10,13 +10,13 @@ struct PronyExpansion <: AbstractPronyExpansion
 end
 PronyExpansion(; n::Int=10, stepsize::Int=1, tol::Real = 1.0e-8, verbosity::Int=1) = PronyExpansion(n, stepsize, convert(Float64, tol), verbosity)
 
-struct DetPronyExpansion <: AbstractPronyExpansion
+struct DeterminedPronyExpansion <: AbstractPronyExpansion
     n::Int 
     stepsize::Int
     tol::Float64
     verbosity::Int
 end
-DetPronyExpansion(; n::Int=10, stepsize::Int=1, tol::Real = 1.0e-8, verbosity::Int=1) = DetPronyExpansion(n, stepsize, convert(Float64, tol), verbosity)
+DeterminedPronyExpansion(; n::Int=10, stepsize::Int=1, tol::Real = 1.0e-8, verbosity::Int=1) = DeterminedPronyExpansion(n, stepsize, convert(Float64, tol), verbosity)
 
 
 function prony(x::Vector, p::Int)
@@ -81,7 +81,7 @@ function lsq_prony(x::Vector, p::Int)
 end
 
 exponential_expansion_n(f::Vector, p::Int, alg::PronyExpansion) = lsq_prony(f, p)
-exponential_expansion_n(f::Vector, p::Int, alg::DetPronyExpansion) = prony(f, p)
+exponential_expansion_n(f::Vector, p::Int, alg::DeterminedPronyExpansion) = prony(f, p)
 
 # function exponential_expansion_n(f::Vector, p::Int, alg::AbstractPronyExpansion)
 #     α, z, E = _exponential_expansion_n(f, p, alg)

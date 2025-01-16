@@ -32,7 +32,7 @@ export leftdeparallel!, rightdeparallel!, deparallel!, deparallel
 export sparsempotensoreltype, AbstractSparseMPOTensor
 export SchurMPOTensor, SparseMPOTensor, MPOHamiltonian, SchurMPO, SparseMPO, fromABCD
 # schurmpo
-export ExponentialExpansionAlgorithm, AbstractPronyExpansion, DetPronyExpansion, PronyExpansion
+export ExponentialExpansionAlgorithm, AbstractPronyExpansion, DeterminedPronyExpansion, PronyExpansion
 export exponential_expansion, expansion_error, prony, lsq_prony
 export ExponentialDecayTerm, GenericDecayTerm, PowerlawDecayTerm
 
