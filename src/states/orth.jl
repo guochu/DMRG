@@ -42,7 +42,16 @@ function _leftorth!(psi::MPS, alg::QR, trunc::TruncationScheme, normalize::Bool)
 	!isa(trunc, TK.NoTruncation) &&  @warn "truncation has no effect with QR"
 	L = length(psi)
 	for i in 1:L-1
-		q, r = leftorth!(psi[i], alg = alg)
+		# println("i = ", isempty(blocks(psi[i])), " ", isempty(blocksectors(domain(psi[i]))))
+		psi_i = psi[i]
+		if isempty(blocks(psi_i))
+			dims = TK.SectorDict{sectortype(psi_i), Int}()
+			W = spacetype(psi_i)(dims)
+			q = similar(psi_i, codomain(psi_i) ← W)
+			r = similar(psi_i, W ← domain(psi_i))
+		else
+			q, r = leftorth!(psi[i], alg = alg)
+		end
 		_renormalize!(psi, r, normalize)
 		psi[i] = q
 		psi[i + 1] = @tensor tmp[1 3; 4] := r[1,2] * psi[i+1][2,3,4]
