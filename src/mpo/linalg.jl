@@ -118,9 +118,10 @@ Base.:-(h::MPO) = -1 * h
 function Base.:*(h::MPO, psi::MPS)
     @assert !isempty(h)
     (length(h) == length(psi)) || throw(DimensionMismatch())
+    T = scalartype(psi)
     r = [@tensor tmp[-1 -2; -3 -4 -5] := a[-1, -3, -4, 1] * b[-2, 1, -5] for (a, b) in zip(h.data, psi.data)]
-    left = isomorphism(fuse(space_l(h), space_l(psi)), space_l(h) ⊗ space_l(psi))
-    fusion_ts = [isomorphism(space(item, 4)' ⊗ space(item, 5)', fuse(space(item, 4)', space(item, 5)')) for item in r]
+    left = isomorphism(T, fuse(space_l(h), space_l(psi)), space_l(h) ⊗ space_l(psi))
+    fusion_ts = [isomorphism(T, space(item, 4)' ⊗ space(item, 5)', fuse(space(item, 4)', space(item, 5)')) for item in r]
     @tensor tmp[-1 -2; -3] := left[-1, 1, 2] * r[1][1,2,-2,3,4] * fusion_ts[1][3,4,-3]
     mpstensors = Vector{typeof(tmp)}(undef, length(psi))
     mpstensors[1] = tmp
@@ -136,7 +137,8 @@ Base.:*(h::MPO, psi::ExactMPS) = ExactMPS(h * MPS(psi))
 Base.:*(h::PartialMPO, psi::MPS) = apply!(h, copy(psi))
 function apply!(h::PartialMPO, psi::MPS)
     @assert positions(h)[end] <= length(psi)
-    M = tensormaptype(spacetype(psi), 2, 3, promote_type(scalartype(h), scalartype(psi)))
+    T = promote_type(scalartype(h), scalartype(psi))
+    M = tensormaptype(spacetype(psi), 2, 3, T)
     _start, _end = positions(h)[1], positions(h)[end]
     r = Vector{M}(undef, _end - _start + 1)
     leftspace = oneunit(space_l(h))
@@ -151,8 +153,8 @@ function apply!(h::PartialMPO, psi::MPS)
             r[i] = @tensor tmp[-1 -2; -3 -4 -5] := hj[-1, -4] * psi[pos][-2, -3, -5]
         end
     end
-    fusion_ts = [isomorphism(space(item, 4)' ⊗ space(item, 5)', fuse(space(item, 4)', space(item, 5)')) for item in r]
-    left = isomorphism(fuse(space(r[1], 1), space(r[1], 2)), space(r[1], 1) ⊗ space(r[1], 2))
+    fusion_ts = [isomorphism(T, space(item, 4)' ⊗ space(item, 5)', fuse(space(item, 4)', space(item, 5)')) for item in r]
+    left = isomorphism(T, fuse(space(r[1], 1), space(r[1], 2)), space(r[1], 1) ⊗ space(r[1], 2))
     psi[_start] = @tensor tmp[1,4;7] := left[1,2,3] * r[1][2,3,4,5,6] * fusion_ts[1][5,6,7]
     for (i, pos) in enumerate(_start+1:_end)
         psi[pos] = @tensor tmp[3,4;7] := conj(fusion_ts[i][1,2,3]) * r[i+1][1,2,4,5,6] * fusion_ts[i+1][5,6,7]

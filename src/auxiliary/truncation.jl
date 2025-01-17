@@ -19,7 +19,7 @@ compute_size(v::AbstractVector) = length(v)
 function compute_size(v::AbstractDict) 
     init = 0
     for (c, b) in v
-        init += dim(c) * length(b)
+        init += dim(c) * b
     end
     return init
 end

@@ -121,7 +121,14 @@ function Base.cat(t1::AbstractTensorMap{<:Number, S, N₁, N₂}, t2::AbstractTe
     return permute(t, p1, p2)
 end
 
+function copytodiagonal!(x, y)
+	for i in 1:size(x, 1)
+		x[i, i] = y[i, i]
+	end
+	return x
+end
 
+# some patches
 function LinearAlgebra.Diagonal(t::AbstractTensorMap{<:Number, <:IndexSpace, 1, 1})
 	r = DiagonalTensorMap{scalartype(t)}(undef, domain(t)[1])
 	for (k, v) in blocks(t)
@@ -129,13 +136,9 @@ function LinearAlgebra.Diagonal(t::AbstractTensorMap{<:Number, <:IndexSpace, 1, 
 	end
 	return r
 end 
+TK.:⊗(::Type{I}) where {I<:Sector} = (one(I),)
+TK.:⊗(::Type{I}, a::I, rest::Vararg{I}) where {I<:Sector} = ⊗(a, rest...)
 
-function copytodiagonal!(x, y)
-	for i in 1:size(x, 1)
-		x[i, i] = y[i, i]
-	end
-	return x
-end
 
 # function _one!(A::AbstractMatrix)
 #     for j in 1:size(A, 2)
