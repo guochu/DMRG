@@ -80,8 +80,8 @@ function compute_scalartype(a)
 	return T
 end
 
-function _add_legs(m::AbstractTensorMap{S, 1, 1}, left::S) where {S <: ElementarySpace}
-	virtual = isomorphism(Matrix{scalartype(m)}, left, left)
+function _add_legs(m::AbstractTensorMap{<:Number, S, 1, 1}, left::S) where {S <: ElementarySpace}
+	virtual = isomorphism(scalartype(m), left, left)
 	@tensor tmp[1,3;2,4] := virtual[1, 2] * m[3,4]
 	return tmp
 end

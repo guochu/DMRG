@@ -46,9 +46,9 @@ end
 function unsafe_mpotensor_adjoint(vj::MPOTensor)
     rj = vj'
     sl = space(rj, 3)'
-    ml = isomorphism(Matrix{scalartype(vj)}, sl, flip(sl))
+    ml = isomorphism(scalartype(vj), sl, flip(sl))
     sr = space(rj, 1)
-    mr = isomorphism(Matrix{scalartype(vj)}, flip(sr), sr)
+    mr = isomorphism(scalartype(vj), flip(sr), sr)
     @tensor tmp[-1 -2; -3 -4] := ml[1, -1] * rj[2,-2,1,-4] * mr[-3,2]
     return tmp
 end

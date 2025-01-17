@@ -10,9 +10,9 @@ distance(hA::MPO, hB::MPO) = _distance(hA, hB)
     TK.id(m::MPO)
 Retuen an identity MPO from a given MPO
 """
-TK.id(m::MPO) = MPO([id(Matrix{scalartype(m)}, oneunit(spacetype(m)) ⊗ space(item, 2) ) for item in m.data])
+TK.id(m::MPO) = MPO([id(scalartype(m), oneunit(spacetype(m)) ⊗ space(item, 2) ) for item in m.data])
 
-TK.id(m::PartialMPO) = PartialMPO([id(Matrix{scalartype(m)}, oneunit(spacetype(m)) ⊗ space(item, 2) ) for item in m.data], positions(m))
+TK.id(m::PartialMPO) = PartialMPO([id(scalartype(m), oneunit(spacetype(m)) ⊗ space(item, 2) ) for item in m.data], positions(m))
 
 
 l_tr(h::MPO) = TensorMap(ones,scalartype(h),oneunit(spacetype(h))')
@@ -179,9 +179,9 @@ end
 function _mult_util(a::Vector{M}, b::Vector{<:MPOTensor}) where {M<:MPOTensor}
     r = [@tensor tmp[-1 -2 -3; -4 -5 -6] := aj[-1, -3, -4, 1] * bj[-2, 1, -5, -6] for (aj, bj) in zip(a, b)]
     T = scalartype(r[1])
-    # left = isomorphism(Matrix{T}, fuse(space(a[1], 1), space(b[1], 1)), space(a[1], 1) ⊗ space(b[1], 1))
-    # fusion_ts = [isomorphism(Matrix{T}, space(item, 4)' ⊗ space(item, 5)', fuse(space(item, 4)', space(item, 5)')) for item in r]
-    fusion_ts = [isomorphism(Matrix{T}, fuse(space(item, 1), space(item, 2)), space(item, 1) ⊗ space(item, 2)) for item in r]
+    # left = isomorphism(T, fuse(space(a[1], 1), space(b[1], 1)), space(a[1], 1) ⊗ space(b[1], 1))
+    # fusion_ts = [isomorphism(T, space(item, 4)' ⊗ space(item, 5)', fuse(space(item, 4)', space(item, 5)')) for item in r]
+    fusion_ts = [isomorphism(T, fuse(space(item, 1), space(item, 2)), space(item, 1) ⊗ space(item, 2)) for item in r]
 
     mpotensors = Vector{mpotensortype(spacetype(M), scalartype(M))}(undef, length(a))
     if length(a) > 1
@@ -196,12 +196,12 @@ function _mult_util(a::Vector{M}, b::Vector{<:MPOTensor}) where {M<:MPOTensor}
     return mpotensors, r[end], fusion_ts[end]
 end
 
-_right_fusion_tensor_n_n(ab) = isomorphism(Matrix{scalartype(ab)}, space(ab, 4)' ⊗ space(ab, 5)', fuse(space(ab, 4)', space(ab, 5)'))
+_right_fusion_tensor_n_n(ab) = isomorphism(scalartype(ab), space(ab, 4)' ⊗ space(ab, 5)', fuse(space(ab, 4)', space(ab, 5)'))
 function _right_fusion_tensor_a_n(ab)
      if isoneunit(space(ab, 4)) || isoneunit(space(ab, 5))
-        right = isomorphism(Matrix{scalartype(ab)}, space(ab, 4)' ⊗ space(ab, 5)', fuse(space(ab, 4)', space(ab, 5)') )
+        right = isomorphism(scalartype(ab), space(ab, 4)' ⊗ space(ab, 5)', fuse(space(ab, 4)', space(ab, 5)') )
     else
-        right = isomorphism(Matrix{scalartype(ab)}, space(ab, 4)', space(ab, 5) ⊗ oneunit(space(ab, 5)) )
+        right = isomorphism(scalartype(ab), space(ab, 4)', space(ab, 5) ⊗ oneunit(space(ab, 5)) )
     end   
 end
 

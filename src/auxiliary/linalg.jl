@@ -40,18 +40,12 @@ end
 _distance(x, y) = sqrt(_distance2(x, y))
 
 
-function entanglement_spectrum(m::AbstractTensorMap{S, 1, 1}) where S
+function entanglement_spectrum(m::AbstractTensorMap)
 	u, ss, v, err = stable_tsvd(m, trunc = TK.NoTruncation())
 	return LinearAlgebra.diag(convert(Array,ss))
 end
 
-function entanglement_spectrum(m::DiagonalMap)
-	s = scalartype(m)[]
-	for (c, b) in blocks(m)
-		append!(s, LinearAlgebra.diag(b))
-	end
-	return s
-end
+entanglement_spectrum(m::DiagonalTensorMap) = m.data
 
 
 function stable_tsvd(m::AbstractTensorMap, args...; trunc::TruncationScheme=NoTruncation())
@@ -79,21 +73,21 @@ loose_isometry(A::Type{<:DenseMatrix}, P::TensorSpace) =
 function loose_isometry(::Type{A},
                     cod::TensorSpace,
                     dom::TensorSpace) where {A<:DenseMatrix}
-    t = TensorMap(s->A(undef, s), cod, dom)
+    t = TensorMap{scalartype(A)}(undef, cod, dom)
     for (c, b) in blocks(t)
-        TK._one!(b)
+        TK.MatrixAlgebra.one!(b)
     end
     return t
 end
 
 function right_embedders(::Type{T}, a::S...) where {T <: Number, S <: ElementarySpace}
     V = ⊕(a...) 
-    ts = [TensorMap(zeros, T, aj, V) for aj in a]
+    ts = [zeros(T, aj, V) for aj in a]
     for c in sectors(V)
     	n = 0
     	for i in 1:length(ts)
     		ni = dim(a[i], c)
-    		block(ts[i], c)[:, (n+1):(n+ni)] .= LinearAlgebra.Diagonal( ones(ni) )
+    		block(ts[i], c)[:, (n+1):(n+ni)] .= Diagonal( ones(ni) )
     		n += ni
     	end
     end
@@ -102,26 +96,52 @@ end
 
 function left_embedders(::Type{T}, a::S...) where {T <: Number, S <: ElementarySpace}
     V = ⊕(a...) 
-    ts = [TensorMap(zeros, T, V, aj) for aj in a]
+    ts = [zeros(T, V, aj) for aj in a]
     for c in sectors(V)
     	n = 0
     	for i in 1:length(ts)
     		ni = dim(a[i], c)
-    		block(ts[i], c)[(n+1):(n+ni), :] .= LinearAlgebra.Diagonal( ones(ni) )
+    		block(ts[i], c)[(n+1):(n+ni), :] .= Diagonal( ones(ni) )
     		n += ni
     	end
     end
     return ts	
 end
 
-# function Base.cat(t1::AbstractTensorMap{S, N₁, N₂}, t2::AbstractTensorMap{S, N₁, N₂}; dims::Int) where {S, N₁, N₂}
-#     dims_rest = tuple((x for x in 1:N₁+N₂ if x != dims)...)
-#     t1′ = permute(t1, (dims,), dims_rest)
-#     t2′ = permute(t2, (dims,), dims_rest)
-#     t = catcodomain(t1′, t2′)
-#     perm = (dims, dims_rest...)
-#     iperm = TupleTools.invperm(perm)
-#     p1 = iperm[1:N₁]
-#     p2 = iperm[N₁+1:N₁+N₂]
-#     return permute(t, p1, p2)
+
+function Base.cat(t1::AbstractTensorMap{<:Number, S, N₁, N₂}, t2::AbstractTensorMap{<:Number, S, N₁, N₂}; dims::Integer) where {S, N₁, N₂}
+    dims_rest = tuple((x for x in 1:N₁+N₂ if x != dims)...)
+    t1′ = permute(t1, (dims,), dims_rest)
+    t2′ = permute(t2, (dims,), dims_rest)
+    t = catcodomain(t1′, t2′)
+    perm = (dims, dims_rest...)
+    iperm = TupleTools.invperm(perm)
+    p1 = iperm[1:N₁]
+    p2 = iperm[N₁+1:N₁+N₂]
+    return permute(t, p1, p2)
+end
+
+
+function LinearAlgebra.Diagonal(t::AbstractTensorMap{<:Number, <:IndexSpace, 1, 1})
+	r = DiagonalTensorMap{scalartype(t)}(undef, domain(t)[1])
+	for (k, v) in blocks(t)
+		copytodiagonal!(block(r, k), v)
+	end
+	return r
+end 
+
+function copytodiagonal!(x, y)
+	for i in 1:size(x, 1)
+		x[i, i] = y[i, i]
+	end
+	return x
+end
+
+# function _one!(A::AbstractMatrix)
+#     for j in 1:size(A, 2)
+#         for i in 1:size(A, 1)
+#             @inbounds A[i, j] = i == j
+#         end
+#     end
+#     return A
 # end

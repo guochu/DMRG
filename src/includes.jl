@@ -3,23 +3,22 @@ abstract type MPSAlgorithm end
 using Logging: @warn
 using Parameters, Printf, Polynomials
 
-using Reexport
 using TupleTools
-using KrylovKit
-@reexport using SphericalTensors
-using SphericalTensors: QR, LQ, SVD, SDD
-const TK = SphericalTensors
+using KrylovKit, TensorKit
+using TensorKit: QR, LQ, SVD, SDD
+const TK = TensorKit
 
-using LinearAlgebra: LinearAlgebra, Symmetric, eigen, qr, pinv, eigvals
-
-# defaults 
-include("defaults.jl")
+using LinearAlgebra: LinearAlgebra, Symmetric, eigen, qr, pinv, eigvals, Diagonal
 
 # auxiliary
 include("auxiliary/periodicarray.jl")
 include("auxiliary/deparallel.jl")
 include("auxiliary/simple_lanczos.jl")
 include("auxiliary/linalg.jl")
+include("auxiliary/truncation.jl")
+
+# defaults 
+include("defaults.jl")
 
 # mps
 include("states/abstractmps.jl")

@@ -107,13 +107,13 @@ leftdeparallel(m::AbstractMatrix; tol::Real=DeparalleliseTol, verbosity::Int=0) 
 rightdeparallel(m::AbstractMatrix; tol::Real=DeparalleliseTol, verbosity::Int=0) = matrixdeparlise(m, true, tol, verbosity=verbosity)
 
 """
-    deparallelise_util(t::TensorMap{<:ElementarySpace}; row::Bool, tol::Real=DeparalleliseTol, verbosity::Int=0)
+    deparallelise_util(t::AbstractTensorMap; row::Bool, tol::Real=DeparalleliseTol, verbosity::Int=0)
     t = M * T, eleminate parallel rows (if row=true) or columns (if row=false)
 """
-function deparallelise_util(t::TensorMap{<:ElementarySpace}; row::Bool, tol::Real=DeparalleliseTol, verbosity::Int=0)
+function deparallelise_util(t::AbstractTensorMap; row::Bool, tol::Real=DeparalleliseTol, verbosity::Int=0)
     I = sectortype(t)
     S = spacetype(t)
-    A = storagetype(t)
+    A = Matrix{scalartype(t)}
     Qdata = TK.SectorDict{I, A}()
     Rdata = TK.SectorDict{I, A}()
     dims = TK.SectorDict{I, Int}()
@@ -131,8 +131,8 @@ function deparallelise_util(t::TensorMap{<:ElementarySpace}; row::Bool, tol::Rea
     W = ProductSpace(V)
     return TensorMap(Qdata, codomain(t)←W), TensorMap(Rdata, W←domain(t))	
 end
-leftdeparallel(t::TensorMap{<:ElementarySpace}; kwargs...) = deparallelise_util(t; row=false, kwargs...)
+leftdeparallel(t::AbstractTensorMap; kwargs...) = deparallelise_util(t; row=false, kwargs...)
 leftdeparallel(t::AbstractTensorMap, left::Tuple, right::Tuple; kwargs...) = leftdeparallel(permute(t, left, right); kwargs...)
-rightdeparallel(t::TensorMap{<:ElementarySpace}; kwargs...) = deparallelise_util(t; row=true, kwargs...)
+rightdeparallel(t::AbstractTensorMap; kwargs...) = deparallelise_util(t; row=true, kwargs...)
 rightdeparallel(t::AbstractTensorMap, left::Tuple, right::Tuple; kwargs...) = rightdeparallel(permute(t, left, right); kwargs...)
 

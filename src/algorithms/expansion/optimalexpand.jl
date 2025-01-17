@@ -27,7 +27,7 @@ function left_expansion!(m::Union{ExpectationCache, ProjectedExpectationCache}, 
 	(U1,S1,V1) = stable_tsvd(intermediate,trunc=trunc)
 
 	a = NL * U1
-	b = TensorMap(zeros, space(a, 3)' ⊗ space(mps[site], 2), domain(mps[site]) )
+	b = zeros(scalartype(a), space(a, 3)' ⊗ space(mps[site], 2), domain(mps[site]) )
 
 	a = catdomain(ACi, a)
 	b = permute(catcodomain(permute(mps[site], (1,), (2,3)), permute(b, (1,), (2,3))), (1,2), (3,))
@@ -57,7 +57,7 @@ function right_expansion!(m::Union{ExpectationCache, ProjectedExpectationCache},
 	intermediate = NL' * AC2 * NR'
 	(U1,S1,V1) = stable_tsvd(intermediate,trunc=trunc)
 
-    a = TensorMap(zeros,codomain(mps[site]),space(V1,1))
+    a = zeros(scalartype(mps), codomain(mps[site]),space(V1,1))
     b = V1*NR;
 
 	a = catdomain(mps[site], a)

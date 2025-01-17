@@ -24,9 +24,9 @@ function Base.getindex(m::AbstractSparseMPOTensor, j::Int, k::Int)
 		omspace = m.rightspaces[k]
 		pspace = m.pspace
 		if r == zero(T)
-			return TensorMap(zeros, T, imspace*pspace,omspace*pspace)
+			return zeros(T, imspace*pspace,omspace*pspace)
 		else
-			return r * isomorphism(Matrix{T}, imspace*pspace,omspace*pspace)
+			return r * isomorphism(T, imspace*pspace,omspace*pspace)
 		end
 	else
 		return r
@@ -55,7 +55,7 @@ function isid(x::MPOTensor; kwargs...)
         blockdim(cod, c) == blockdim(dom, c) || return false,0.0;
     end
 
-    id = isomorphism(Matrix{scalartype(x)},cod,dom)
+    id = isomorphism(scalartype(x),cod,dom)
 
     return _is_prop_util(x, id; kwargs...)
 end
@@ -64,7 +64,7 @@ isid(x::Number; kwargs...) = true, x
 
 function isid(x::MPSBondTensor; kwargs...)
 	(domain(x) == codomain(x)) || return false, 0.0
-	id = isomorphism(Matrix{scalartype(x)}, codomain(x), domain(x))
+	id = isomorphism(scalartype(x), codomain(x), domain(x))
 	return _is_prop_util(x, id; kwargs...)
 end
 

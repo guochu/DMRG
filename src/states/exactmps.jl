@@ -80,12 +80,12 @@ function _exactmps_side_tensors(::Type{T}, physpaces::Vector{S}, left::S, right:
 	mpstensors = Vector{mpstensortype(S, T)}(undef, L)
 	for i in 1:middle_site-1
 		physpace = physpaces[i]
-		mpstensors[i] = isomorphism(Matrix{T}, left ⊗ physpace, fuse(left, physpace))
+		mpstensors[i] = isomorphism(T, left ⊗ physpace, fuse(left, physpace))
 		left = space(mpstensors[i], 3)'
 	end
 	for i in L:-1:middle_site+1
 		physpace = physpaces[i]
-		tmp = isomorphism(Matrix{T}, fuse(physpace', right), physpace' ⊗ right)
+		tmp = isomorphism(T, fuse(physpace', right), physpace' ⊗ right)
 		mpstensors[i] = permute(tmp, (1, 2), (3,))
 		right = space(mpstensors[i], 1)
 	end

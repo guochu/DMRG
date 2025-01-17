@@ -1,8 +1,8 @@
-const MPSTensor{S} = AbstractTensorMap{S, 2, 1} where {S<:ElementarySpace}
-const MPOTensor{S} = AbstractTensorMap{S, 2, 2} where {S<:ElementarySpace}
+const MPSTensor{S} = AbstractTensorMap{<:Number, S, 2, 1} where {S<:ElementarySpace}
+const MPOTensor{S} = AbstractTensorMap{<:Number, S, 2, 2} where {S<:ElementarySpace}
 # The bond tensor are just the singlur vector but has to be stored as a general matrix 
 # since TensorKit does not specialize for Diagonal Matrices
-const MPSBondTensor{S} = AbstractTensorMap{S, 1, 1} where {S<:ElementarySpace}
+const MPSBondTensor{S} = AbstractTensorMap{<:Number, S, 1, 1} where {S<:ElementarySpace}
 const SiteOperator{S} = Union{MPOTensor{S}, MPSBondTensor{S}}
 
 # bondtensortype(::Type{A}) where {A <: AbstractTensorMap} = tensormaptype(spacetype(A), 1, 1, TK.similarstoragetype(A, real(scalartype(A))))
@@ -11,8 +11,16 @@ const SiteOperator{S} = Union{MPOTensor{S}, MPSBondTensor{S}}
 
 mpstensortype(::Type{S}, ::Type{T}) where {S <: ElementarySpace, T} = tensormaptype(S, 2, 1, T)
 mpotensortype(::Type{S}, ::Type{T}) where {S <: ElementarySpace, T} = tensormaptype(S, 2, 2, T)
-bondtensortype(::Type{S}, ::Type{T}) where {S <: ElementarySpace, T<:Union{Number, DenseMatrix}} = tensormaptype(S, 1, 1, T)
-bondtensortype(::Type{S}, ::Type{T}) where {S <: ElementarySpace, T<:Diagonal} = diagonalmaptype(S, eltype(T))
+# bondtensortype(::Type{S}, ::Type{T}) where {S <: ElementarySpace, T<:Union{Number, DenseMatrix}} = tensormaptype(S, 1, 1, T)
+function bondtensortype(::Type{S}, ::Type{TorA}) where {S <: ElementarySpace, TorA<:Union{Number, DenseVector}} 
+    if TorA <: Number
+        return DiagonalTensorMap{TorA,S,Vector{TorA}}
+    elseif TorA <: DenseVector
+        return DiagonalTensorMap{scalartype(TorA),S,TorA}
+    else
+        throw(ArgumentError("argument $TorA should specify a scalar type (`<:Number`) or a storage type `<:DenseVector{<:Number}`"))
+    end
+end
 
 # bondtensortype(a::AbstractTensorMap) = bondtensortype(typeof(a))
 # mpstensortype(a::AbstractTensorMap) = mpstensortype(typeof(a))

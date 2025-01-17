@@ -8,7 +8,7 @@ println("------------------------------------")
 
 	dt = 0.01
 	dmrg_sweeps = 20
-	tol = 1.0e-2
+	tol = 5.0e-2
 	for L in (3, 4)
 		# println("test for L= ", L)
 

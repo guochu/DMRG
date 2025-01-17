@@ -59,7 +59,7 @@ Other constructors:
 function MPS(data::Vector{A}) where {A<:MPSTensor}
 	check_mps_spaces(data)	
 	T = real(scalartype(A))
-	B = bondtensortype(spacetype(A), Diagonal{T, Vector{T}})
+	B = bondtensortype(spacetype(A), T)
 	svectors = Vector{Union{Missing, B}}(missing, length(data)+1)
 	svectors[1] = Diagonal(id(space_l(data[1])))
 	svectors[end] = Diagonal(id(space_r(data[end])'))

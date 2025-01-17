@@ -81,7 +81,7 @@ function Base.setindex!(m::SchurMPOTensor{S, M, T}, v, i::Int, j::Int) where {S,
 		((space(v, 1) == m.leftspaces[i]) && (space(v, 3)' == m.rightspaces[j])) || throw(SpaceMismatch())
 		m.Os[i, j] = convert(M, v) 
 	elseif isa(v, MPSBondTensor)
-		b_iden = isomorphism(Matrix{T}, m.leftspaces[i], m.rightspaces[j])
+		b_iden = isomorphism(T, m.leftspaces[i], m.rightspaces[j])
 		@tensor tmp[-1 -2; -3 -4] := b_iden[-1, -3] * v[-2, -4]
 		m.Os[i, j] = tmp
 	else
@@ -175,7 +175,7 @@ function compute_mpotensor_data(::Type{S}, ::Type{M}, ::Type{T}, data::AbstractM
 				if _is_id
 					sj = scal
 				else
-					virtual = isomorphism(Matrix{T}, leftspaces[i], rightspaces[j])
+					virtual = isomorphism(T, leftspaces[i], rightspaces[j])
 					sj = @tensor tmp[1,3;2,4] := virtual[1, 2] * sj[3,4]
 				end
  			elseif isa(sj, MPOTensor)
@@ -214,7 +214,7 @@ function compute_mpotensor_data(::Type{M}, ::Type{T}, data::AbstractMatrix, left
 				if _is_id
 					sj = scal
 				else
-					virtual = isomorphism(Matrix{T}, leftspaces[i], rightspaces[j])
+					virtual = isomorphism(T, leftspaces[i], rightspaces[j])
 					# sj = _add_legs(sj)
 					sj = @tensor tmp[1,3;2,4] := virtual[1, 2] * sj[3,4]
 				end

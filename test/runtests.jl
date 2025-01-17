@@ -1,7 +1,7 @@
 # push!(LOAD_PATH, dirname(dirname(Base.@__DIR__)) * "/SphericalTensors/src")
 
 using Test, Random
-using SphericalTensors
+using TensorKit
 
 # push!(LOAD_PATH, dirname(Base.@__DIR__) * "/src")
 # using DMRG

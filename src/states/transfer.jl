@@ -1,7 +1,7 @@
 
 
 """
-	updateright(hold::AbstractTensorMap{S, 1, 1}, mpsAj::MPSTensor{S}, mpsBj::MPSTensor{S}) where {S<:ElementarySpace}
+	updateright(hold::MPSBondTensor, mpsAj::MPSTensor{S}, mpsBj::MPSTensor{S}) where {S<:ElementarySpace}
 	update storage from right to left for overlap of mps
 """
 function updateright(hold::MPSBondTensor, mpsAj::MPSTensor, mpsBj::MPSTensor) 
@@ -9,7 +9,7 @@ function updateright(hold::MPSBondTensor, mpsAj::MPSTensor, mpsBj::MPSTensor)
 end
 
 """
-	updateleft(hold::AbstractTensorMap{S, 1, 1}, mpsAj::MPSTensor{S}, mpsBj::MPSTensor{S}) where {S<:ElementarySpace}
+	updateleft(hold::MPSBondTensor, mpsAj::MPSTensor{S}, mpsBj::MPSTensor{S}) where {S<:ElementarySpace}
 	update storage from left to right for overlap of mps
 """
 function updateleft(hold::MPSBondTensor, mpsAj::MPSTensor, mpsBj::MPSTensor) 
@@ -19,7 +19,7 @@ end
 
 
 """
-	updateright(hold::AbstractTensorMap{S, 1, 1}, hAj::MPOTensor{S}, hBj::MPOTensor{S}) where {S<:ElementarySpace}
+	updateright(hold::MPSBondTensor, hAj::MPOTensor{S}, hBj::MPOTensor{S}) where {S<:ElementarySpace}
 	update storage from right to left for overlap of mps
 """
 function updateright(hold::MPSBondTensor, hAj::MPOTensor, hBj::MPOTensor) 
@@ -29,7 +29,7 @@ end
 
 
 """
-	updateleft(hold::AbstractTensorMap{S, 1, 1}, hAj::MPOTensor{S}, hBj::MPOTensor{S}) where {S<:ElementarySpace}
+	updateleft(hold::MPSBondTensor, hAj::MPOTensor{S}, hBj::MPOTensor{S}) where {S<:ElementarySpace}
 	update storage from left to right for overlap of mps
 """
 function updateleft(hold::MPSBondTensor, hAj::MPOTensor, hBj::MPOTensor) 
@@ -62,18 +62,8 @@ function updateleft(hold::MPSTensor, psiAj::MPSTensor, hj::Number, psiBj::MPSTen
 	@tensor hnew[-1 -2; -3] := hj * hold[1,-2,2] * psiBj[2,3,-3] * conj(psiAj[1,3,-1])
 end
 
-function updatetraceleft(hold::AbstractTensorMap{S, 1, 0}, hj::MPOTensor{S}) where {S <: ElementarySpace}
+function updatetraceleft(hold::AbstractTensorMap{<:Number, S, 1, 0}, hj::MPOTensor{S}) where {S <: ElementarySpace}
 	@tensor hnew[-1] := hold[1] * hj[1,2,-1,2]
 	return hnew
 end
-
-# function updatetraceleft(hold::AbstractTensorMap{S, 2, 0}, hj::MPOTensor{S}, psij::MPSTensor{S}, fuser::MPSTensor{S}) where {S <: ElementarySpace}
-# 	@tensor hnew[-1 -2] := hold[1, 2] * hj[1, 3, -1, 4] * psij[2, 4, -2] * fuser[5, 5, 3]
-# 	return hnew
-# end
-
-# function updatetraceleft(hold::AbstractTensorMap{S, 2, 0}, hj::Nothing, psij::MPSTensor{S}, fuser::MPSTensor{S}) where {S <: ElementarySpace}
-# 	@tensor hnew[-1 -2] := hold[-1, 2] * psij[2, 3, -2] * fuser[5, 5, 3]
-# 	return hnew
-# end
 

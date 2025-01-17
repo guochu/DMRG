@@ -46,9 +46,9 @@ function _longrange_schurmpo_util(h1, h2s::Vector{<:ExponentialDecayTerm})
 	cell[1, end] = h1
 	for i in 1:N
         if isa(h2s[i].a, MPSBondTensor)
-            b_iden = id(Matrix{T}, oneunit(spacetype(h2s[i].a)))
+            b_iden = id(T, oneunit(spacetype(h2s[i].a)))
         else
-            b_iden = id(Matrix{T}, space_r(h2s[i].a)')
+            b_iden = id(T, space_r(h2s[i].a)')
         end
         m = h2s[i].m
         @tensor iden[-1 -2; -3 -4] := b_iden[-1, -3] * m[-2, -4]

@@ -59,7 +59,7 @@ function Base.setindex!(m::SparseMPOTensor{S, M, T}, v, i::Int, j::Int) where {S
 		((space(v, 1) == m.leftspaces[i]) && (space(v, 3)' == m.rightspaces[j])) || throw(SpaceMismatch())
 		m.Os[i, j] = convert(M, v) 
 	elseif isa(v, MPSBondTensor)
-		b_iden = isomorphism(Matrix{T}, m.leftspaces[i], m.rightspaces[j])
+		b_iden = isomorphism(T, m.leftspaces[i], m.rightspaces[j])
 		@tensor tmp[-1 -2; -3 -4] := b_iden[-1, -3] * v[-2, -4]
 		m.Os[i, j] = tmp
 	else
