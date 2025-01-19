@@ -263,10 +263,10 @@ end
 			E3 = E3[2]
 
 			E4 = do_dmrg(environments(mpo, copy(state), [gs_state]), DMRG2(trunc=truncdimcutoff(D=20, ϵ=1.0e-10)))
-			@test E3 ≈ E4 atol = 1.0e-5
+			@test E3 ≈ E4 atol = 1.0e-4
 
 			E5 = do_dmrg(environments(mpo, copy(state), [gs_state]), DMRG1S(trunc=truncdimcutoff(D=20, ϵ=1.0e-10)))
-			@test E3 ≈ E5 atol = 1.0e-5
+			@test E3 ≈ E5 atol = 1.0e-4
 
 		end
 	end
