@@ -13,7 +13,7 @@ module DMRG
 # auxiliary
 export truncdimcutoff, leftdeparallel, rightdeparallel, renyi_entropy, PeriodicArray
 export stable_tsvd, stable_tsvd!
-export truncdimcutoff, TruncationDimCutoff, Diagonal
+export truncdimcutoff, TruncationDimCutoff, Diagonal, scalartype
 
 # mps
 export AbstractMPS, AbstractFiniteMPS, MPSTensor, MPOTensor, MPSBondTensor, SiteOperator, bondtensortype, mpstensortype, mpotensortype
