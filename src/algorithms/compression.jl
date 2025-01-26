@@ -10,7 +10,7 @@ end
 	verbosity::Int = Defaults.verbosity
 end
 
-SVDCompression(trunc::TruncationDimCutoff) = SVDCompression(D=trunc.D, tol=trunc.ϵ)
+SVDCompression(trunc::TruncationDimCutoff; verbosity::Int=0) = SVDCompression(D=trunc.D, tol=trunc.ϵ, verbosity=verbosity)
 Base.similar(x::SVDCompression; D::Int=x.D, tol::Float64=x.tol, verbosity::Int=x.verbosity) = SVDCompression(D=D, tol=tol, verbosity=verbosity)
 
 function Base.getproperty(x::SVDCompression, s::Symbol)
