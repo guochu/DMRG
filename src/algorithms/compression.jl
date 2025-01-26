@@ -2,7 +2,7 @@
 @with_kw struct SVDCompression <: DMRGAlgorithm
 	D::Int = Defaults.D
 	tol::Float64 = Defaults.tol
-	verbosity::Int = Defaults.verbosity
+	verbosity::Int = 0
 end
 
 @with_kw struct Deparallelise <: DMRGAlgorithm
