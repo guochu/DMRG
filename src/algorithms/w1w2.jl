@@ -87,9 +87,8 @@ function timeevompo(m::SchurMPOTensor, dt::Number, alg::WII)
 		init_1 = isometry(storagetype(D), codomain(D), domain(D))
 		init = [init_1, convert(T, zero(m[1, k])), convert(T, zero(m[j, end])), convert(T, zero(m[j, k]))]
 
-		(y, convhist) = exponentiate(1.0, RecursiveVec(init),
-									 Arnoldi(; tol=alg.tol, maxiter=alg.maxiter)) do x
-			out = similar(x.vecs)
+		(y, convhist) = exponentiate(1.0, init, Arnoldi(; tol=alg.tol, maxiter=alg.maxiter)) do x
+			out = similar(x)
 
 			@tensor out[1][-1 -2; -3 -4] := δ * x[1][-1 1; -3 -4] * m[1, end][2 -2; 2 1] 
 
@@ -109,7 +108,7 @@ function timeevompo(m::SchurMPOTensor, dt::Number, alg::WII)
 
 			@tensor out[4][-1 -2; -3 -4] += δ₂ * x[3][-1 4; 3 -4] * m[1, k][3 -2; -3 4] 
 
-			return RecursiveVec(out)
+			return out
 		end
 		convhist.converged == 0 && @warn "failed to exponentiate $(convhist.normres)"
 
