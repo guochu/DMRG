@@ -8,10 +8,11 @@ struct Orthogonalize{A<:Union{QR, SVD}, T<:TruncationScheme} <: MatrixProductOrt
 	orth::A
 	trunc::T
 	normalize::Bool
+	verbosity::Int
 end
-Orthogonalize(a::Union{QR, SVD}, trunc::TruncationScheme; normalize::Bool=false) = Orthogonalize(a, trunc, normalize)
-Orthogonalize(a::Union{QR, SVD}; trunc::TruncationScheme=TK.NoTruncation(), normalize::Bool=false) = Orthogonalize(a, trunc, normalize)
-Orthogonalize(; alg::Union{QR, SVD} = SVD(), trunc::TruncationScheme=TK.NoTruncation(), normalize::Bool=false) = Orthogonalize(alg, trunc, normalize)
+Orthogonalize(a::Union{QR, SVD}, trunc::TruncationScheme; normalize::Bool=false, verbosity::Int=0) = Orthogonalize(a, trunc, normalize, verbosity)
+Orthogonalize(a::Union{QR, SVD}; trunc::TruncationScheme=TK.NoTruncation(), normalize::Bool=false, verbosity::Int=0) = Orthogonalize(a, trunc, normalize, verbosity)
+Orthogonalize(; alg::Union{QR, SVD} = SVD(), trunc::TruncationScheme=TK.NoTruncation(), normalize::Bool=false, verbosity::Int=0) = Orthogonalize(alg, trunc, normalize, verbosity)
 
 
 # function rightcanonicalize!(psi::AbstractMPS; normalize::Bool=false, trunc::TruncationScheme = NoTruncation())
