@@ -9,6 +9,7 @@ using TensorKit: QR, LQ, SVD, SDD
 const TK = TensorKit
 
 using LinearAlgebra: LinearAlgebra, Symmetric, eigen, qr, pinv, eigvals, Diagonal
+using LsqFit
 
 # auxiliary
 include("auxiliary/periodicarray.jl")
