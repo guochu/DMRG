@@ -37,7 +37,7 @@ function Base.getproperty(x::DMRG1, s::Symbol)
 end
 
 Base.similar(x::DMRG1; D::Int=x.D, tolgauge::Float64=x.tolgauge, maxiter::Int=x.maxiter, tol::Float64=x.tol, maxitereig::Int=x.maxitereig, 
-			toleig::Float64=x.toleig, verbosity::Int=x.verbosity, callback::Function=Returns(nothing)) = DMRG1(
+			toleig::Float64=x.toleig, verbosity::Int=x.verbosity, callback::Function=x.callback) = DMRG1(
 			D=D, tolgauge=tolgauge, maxiter=maxiter, tol=tol, maxitereig=maxitereig, toleig=toleig, verbosity=verbosity, callback=callback)
 
 function calc_galerkin(m::Union{ExpectationCache, ProjectedExpectationCache}, site::Int)
