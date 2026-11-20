@@ -23,6 +23,7 @@ export bond_dimension, bond_dimensions, distance, space_l, space_r, l_LL, r_RR, 
 export ophysical_space, iphysical_space, physical_space, physical_spaces, prodmps, randommps, renyi_entropies
 export left_virtualspace, left_virtualspaces, right_virtualspace, right_virtualspaces
 export ExactMPS
+export QR, LQ, SVD, SDD
 
 
 # mpo
@@ -60,11 +61,13 @@ using Parameters, Printf, Polynomials
 
 using TupleTools
 using KrylovKit, TensorKit
-using TensorKit: QR, LQ, SVD, SDD
 const TK = TensorKit
 
 using LinearAlgebra: LinearAlgebra, Symmetric, eigen, qr, pinv, eigvals, Diagonal
 using LsqFit
+
+# TensorKit v0.17 compatibility layer (must be included first)
+include("auxiliary/tkcompat.jl")
 
 # auxiliary
 include("auxiliary/periodicarray.jl")

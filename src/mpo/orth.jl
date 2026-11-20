@@ -1,12 +1,12 @@
 canonicalize(h::MPO; kwargs...) = canonicalize!(copy(h); kwargs...)
 function canonicalize!(h::MPO; alg::Orthogonalize = Orthogonalize(SVD(), DefaultTruncation, normalize=false))
-	_leftorth!(h, QR(), TK.NoTruncation(), alg.normalize)
+	_leftorth!(h, QR(), notrunc(), alg.normalize)
 	return rightorth!(h, alg=alg)
 end
 
-TK.leftorth!(h::MPO; alg::Orthogonalize = Orthogonalize()) = _leftorth!(h, alg.orth, alg.trunc, alg.normalize)
+leftorth!(h::MPO; alg::Orthogonalize = Orthogonalize()) = _leftorth!(h, alg.orth, alg.trunc, alg.normalize)
 function _leftorth!(h::MPO, alg::QR, trunc::TruncationScheme, normalize::Bool)
-	!isa(trunc, TK.NoTruncation) &&  @warn "truncation has no effect with QR"
+	!isa(trunc, NoTruncation) &&  @warn "truncation has no effect with QR"
 	L = length(h)
 	for i in 1:L-1
 		q, r = leftorth(h[i], (1,2,4), (3,), alg = alg)
@@ -35,9 +35,9 @@ function _leftorth!(h::MPO, alg::SVD, trunc::TruncationScheme, normalize::Bool)
 end
 
 
-TK.rightorth!(h::MPO; alg::Orthogonalize = Orthogonalize()) = _rightorth!(h, alg.orth, alg.trunc, alg.normalize)
+rightorth!(h::MPO; alg::Orthogonalize = Orthogonalize()) = _rightorth!(h, alg.orth, alg.trunc, alg.normalize)
 function _rightorth!(h::MPO, alg::QR, trunc::TruncationScheme, normalize::Bool)
-	!isa(trunc, TK.NoTruncation) &&  @warn "truncation has no effect with QR"
+	!isa(trunc, NoTruncation) &&  @warn "truncation has no effect with QR"
 	L = length(h)
 	for i in L:-1:2
 		l, q = rightorth(h[i], (1,), (2, 3, 4), alg=LQ())

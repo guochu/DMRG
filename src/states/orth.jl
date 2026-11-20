@@ -11,8 +11,8 @@ struct Orthogonalize{A<:Union{QR, SVD}, T<:TruncationScheme} <: MatrixProductOrt
 	verbosity::Int
 end
 Orthogonalize(a::Union{QR, SVD}, trunc::TruncationScheme; normalize::Bool=false, verbosity::Int=0) = Orthogonalize(a, trunc, normalize, verbosity)
-Orthogonalize(a::Union{QR, SVD}; trunc::TruncationScheme=TK.NoTruncation(), normalize::Bool=false, verbosity::Int=0) = Orthogonalize(a, trunc, normalize, verbosity)
-Orthogonalize(; alg::Union{QR, SVD} = SVD(), trunc::TruncationScheme=TK.NoTruncation(), normalize::Bool=false, verbosity::Int=0) = Orthogonalize(alg, trunc, normalize, verbosity)
+Orthogonalize(a::Union{QR, SVD}; trunc::TruncationScheme=notrunc(), normalize::Bool=false, verbosity::Int=0) = Orthogonalize(a, trunc, normalize, verbosity)
+Orthogonalize(; alg::Union{QR, SVD} = SVD(), trunc::TruncationScheme=notrunc(), normalize::Bool=false, verbosity::Int=0) = Orthogonalize(alg, trunc, normalize, verbosity)
 
 
 # function rightcanonicalize!(psi::AbstractMPS; normalize::Bool=false, trunc::TruncationScheme = NoTruncation())
@@ -21,7 +21,7 @@ Orthogonalize(; alg::Union{QR, SVD} = SVD(), trunc::TruncationScheme=TK.NoTrunca
 # 	return errs
 # end
 function rightcanonicalize!(psi::MPS; alg::Orthogonalize = Orthogonalize(SVD(), DefaultTruncation, normalize=false))
-	_leftorth!(psi, QR(), TK.NoTruncation(), alg.normalize)
+	_leftorth!(psi, QR(), notrunc(), alg.normalize)
 	 return rightorth!(psi, alg=alg)
 end
 
@@ -38,9 +38,9 @@ Kyward arguments:
 canonicalize!(psi::MPS; kwargs...) = rightcanonicalize!(psi; kwargs...)
 canonicalize(psi::MPS; kwargs...) = canonicalize!(deepcopy(psi); kwargs...)
 
-TK.leftorth!(psi::MPS; alg::Orthogonalize = Orthogonalize()) = _leftorth!(psi, alg.orth, alg.trunc, alg.normalize)
+leftorth!(psi::MPS; alg::Orthogonalize = Orthogonalize()) = _leftorth!(psi, alg.orth, alg.trunc, alg.normalize)
 function _leftorth!(psi::MPS, alg::QR, trunc::TruncationScheme, normalize::Bool)
-	!isa(trunc, TK.NoTruncation) &&  @warn "truncation has no effect with QR"
+	!isa(trunc, NoTruncation) &&  @warn "truncation has no effect with QR"
 	L = length(psi)
 	for i in 1:L-1
 		# println("i = ", isempty(blocks(psi[i])), " ", isempty(blocksectors(domain(psi[i]))))
@@ -82,9 +82,9 @@ function _leftorth!(psi::MPS, alg::SVD, trunc::TruncationScheme, normalize::Bool
 end
 
 
-TK.rightorth!(psi::MPS; alg::Orthogonalize = Orthogonalize()) = _rightorth!(psi, alg.orth, alg.trunc, alg.normalize)
+rightorth!(psi::MPS; alg::Orthogonalize = Orthogonalize()) = _rightorth!(psi, alg.orth, alg.trunc, alg.normalize)
 function _rightorth!(psi::MPS, alg::QR, trunc::TruncationScheme, normalize::Bool)
-	!isa(trunc, TK.NoTruncation) &&  @warn "truncation has no effect with QR"
+	!isa(trunc, NoTruncation) &&  @warn "truncation has no effect with QR"
 	L = length(psi)
 	for i in L:-1:2
 		l, q = rightorth(psi[i], (1,), (2, 3), alg=LQ())

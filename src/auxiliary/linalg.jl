@@ -41,28 +41,11 @@ _distance(x, y) = sqrt(_distance2(x, y))
 
 
 function entanglement_spectrum(m::AbstractTensorMap)
-	u, ss, v, err = stable_tsvd(m, trunc = TK.NoTruncation())
-	return LinearAlgebra.diag(convert(Array,ss))
+    u, ss, v, err = stable_tsvd(m, trunc = notrunc())
+    return LinearAlgebra.diag(convert(Array,ss))
 end
 
 entanglement_spectrum(m::DiagonalTensorMap) = m.data
-
-
-function stable_tsvd(m::AbstractTensorMap, args...; trunc::TruncationScheme=NoTruncation())
-	try
-		return tsvd(m, args...; trunc=trunc, alg=TK.SDD())
-	catch
-		return tsvd(m, args...; trunc=trunc, alg=TK.SVD())
-	end
-end
-
-function stable_tsvd!(m::AbstractTensorMap; trunc::TruncationScheme=NoTruncation())
-	try
-		return tsvd!(copy(m), trunc=trunc, alg=TK.SDD())
-	catch
-		return tsvd!(m, trunc=trunc, alg=TK.SVD())
-	end
-end
 
 
 loose_isometry(cod::TensorSpace, dom::TensorSpace) =
@@ -75,7 +58,7 @@ function loose_isometry(::Type{A},
                     dom::TensorSpace) where {A<:DenseMatrix}
     t = TensorMap{scalartype(A)}(undef, cod, dom)
     for (c, b) in blocks(t)
-        TK.MatrixAlgebra.one!(b)
+        copyto!(b, LinearAlgebra.I)
     end
     return t
 end

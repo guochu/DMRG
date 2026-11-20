@@ -91,7 +91,7 @@ function randommps(::Type{T}, physpaces::Vector{S}; D::Int, left::S=oneunit(S), 
 	L = length(physpaces)
 	A = mpstensortype(S, T)
 	mpstensors = Vector{A}(undef, L)
-	trunc = truncdim(D)
+	trunc = truncrank(D)
 	for i in 1:L
 		virtualpaces[i+1] = infimum(fuse(virtualpaces[i] ⊗ physpaces[i]), virtualpaces[i+1])
 		tmp = TensorMap(randn, T, virtualpaces[i] ⊗ physpaces[i] ← virtualpaces[i+1])
