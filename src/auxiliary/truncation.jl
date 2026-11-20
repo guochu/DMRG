@@ -37,7 +37,7 @@ end
 
 # sector holding the smallest kept singular value (dim-weighted), values sorted descending per sector
 function _findnexttruncvalue(values::SectorVector, truncdim::SectorDict{I,Int}, p::Real) where {I<:Sector}
-    (isempty(values) || all(iszero, values(truncdim))) && return nothing
+    (isempty(values) || all(iszero, Base.values(truncdim))) && return nothing
 
     cmin = first(c for (c, d) in truncdim if d > 0)
     weightedσmin = dim(cmin)^inv(p) * values[cmin][truncdim[cmin]]
