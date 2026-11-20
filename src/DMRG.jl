@@ -82,7 +82,6 @@ include("defaults.jl")
 # mps
 include("states/abstractmps.jl")
 include("states/transfer.jl")
-include("states/bondview.jl")
 include("states/finitemps.jl")
 include("states/exactmps.jl")
 include("states/orth.jl")
