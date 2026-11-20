@@ -33,11 +33,14 @@ export leftdeparallel!, rightdeparallel!, deparallel!, deparallel
 # mpohamiltonian
 export sparsempotensoreltype, AbstractSparseMPOTensor
 export SchurMPOTensor, SparseMPOTensor, MPOHamiltonian, SchurMPO, SparseMPO, fromABCD
-# schurmpo
-export ExponentialExpansionAlgorithm, AbstractPronyExpansion, DeterminedPronyExpansion, PronyExpansion
-export PronyExpansion2, LsqExpansion2
-export exponential_expansion, expansion_error, prony, lsq_prony
+# exponential expansion (delegated to ExpExp)
+export ExponentialExpansionAlgorithm, AbstractPronyExpansion
+export OverDeterminedProny, DeterminedProny, MatrixPencil, LeastSquareProny, AnchoredMatrixPencil
+export PronyExpansion, DeterminedPronyExpansion
+export exponential_expansion, expansion_error
+export anchored_matrix_pencil, anchored_matrix_pencil_sweep
 export ExponentialDecayTerm, GenericDecayTerm, PowerlawDecayTerm
+export exponential_expansion_terms
 
 # environments
 export environments, leftenv, rightenv, value
@@ -63,7 +66,10 @@ using KrylovKit, TensorKit
 const TK = TensorKit
 
 using LinearAlgebra: LinearAlgebra, Symmetric, eigen, Diagonal
-using LsqFit
+using ExpExp
+# backward-compatible aliases for the historical local names
+const PronyExpansion = OverDeterminedProny
+const DeterminedPronyExpansion = DeterminedProny
 
 # TensorKit v0.17 compatibility layer (must be included first)
 include("auxiliary/tkcompat.jl")

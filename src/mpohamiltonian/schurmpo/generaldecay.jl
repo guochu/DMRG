@@ -41,11 +41,11 @@ PowerlawDecayTerm(a::M, b::M; α::Number=1., kwargs...) where {M<:SiteOperator} 
 # L is the number of sites
 
 """
-    exponential_expansion(x::GenericDecayTerm{M, T, F}; len::Int, alg)
+    exponential_expansion_terms(x::GenericDecayTerm{M, T, F}; len::Int, alg)
 
 Convert a GenericDecayTerm into a list of ExponentialDecayTerm
 """
-function exponential_expansion(x::GenericDecayTerm{M1, M, M2, F, T}; len::Union{Int, Nothing}=nothing, alg::ExponentialExpansionAlgorithm=PronyExpansion()) where {M1, M, M2, F, T}
+function exponential_expansion_terms(x::GenericDecayTerm{M1, M, M2, F, T}; len::Union{Int, Nothing}=nothing, alg::ExponentialExpansionAlgorithm=PronyExpansion()) where {M1, M, M2, F, T}
     if F <: AbstractVector
         xs, lambdas = exponential_expansion(x.f, alg=alg)
         isa(len, Int) && println("key len ignored")
