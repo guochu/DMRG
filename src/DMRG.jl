@@ -56,14 +56,13 @@ export ED, exact_diagonalization, exact_timeevolution!, exact_timeevolution
 
 abstract type MPSAlgorithm end
 
-using Logging: @warn
-using Parameters, Printf, Polynomials
+using Parameters, Polynomials
 
 using TupleTools
 using KrylovKit, TensorKit
 const TK = TensorKit
 
-using LinearAlgebra: LinearAlgebra, Symmetric, eigen, qr, pinv, eigvals, Diagonal
+using LinearAlgebra: LinearAlgebra, Symmetric, eigen, Diagonal
 using LsqFit
 
 # TensorKit v0.17 compatibility layer (must be included first)
