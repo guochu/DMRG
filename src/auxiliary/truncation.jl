@@ -55,7 +55,7 @@ end
 # sector holding the largest discarded singular value (dim-weighted)
 function _findnextgrowvalue(values::SectorVector, truncdim::SectorDict{I,Int}, p::Real) where {I<:Sector}
     istruncated = SectorDict{I,Bool}(c => (d < length(values[c])) for (c, d) in truncdim)
-    (isempty(values) || !any(values(istruncated))) && return nothing
+    (isempty(values) || !any(Base.values(istruncated))) && return nothing
 
     cmax = first(c for (c, s) in istruncated if s)
     weightedσmax = dim(cmax)^inv(p) * values[cmax][truncdim[cmax] + 1]
