@@ -17,7 +17,7 @@ function _eig_solver(h, init, maxiter, tol)
 	return eigenvalue_0, eigenvec_0
 end
 
-@with_kw struct DMRG1 <: DMRGAlgorithm 
+@kwdef struct DMRG1 <: DMRGAlgorithm 
 	D::Int = Defaults.D
 	tolgauge::Float64 = Defaults.tolgauge
 	maxiter::Int = Defaults.maxiter
@@ -102,7 +102,7 @@ function rightsweep!(m::ExpectationCache, alg::DMRG1)
 end
 
 
-@with_kw struct DMRG2 <: DMRGAlgorithm
+@kwdef struct DMRG2 <: DMRGAlgorithm
 	maxiter::Int = Defaults.maxiter
 	tol::Float64 = Defaults.tol	
 	maxitereig::Int = 10
@@ -185,7 +185,7 @@ end
 
 
 
-@with_kw  struct DMRG1S{E<:SubspaceExpansionScheme} <: DMRGAlgorithm
+@kwdef struct DMRG1S{E<:SubspaceExpansionScheme} <: DMRGAlgorithm
 	maxiter::Int = Defaults.maxiter
 	tol::Float64 = Defaults.tol	
 	maxitereig::Int = 10

@@ -59,8 +59,6 @@ export ED, exact_diagonalization, exact_timeevolution!, exact_timeevolution
 
 abstract type MPSAlgorithm end
 
-using Parameters
-
 using TupleTools
 using KrylovKit, TensorKit
 const TK = TensorKit

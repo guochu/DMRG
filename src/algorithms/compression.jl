@@ -1,11 +1,11 @@
 
-@with_kw struct SVDCompression <: DMRGAlgorithm
+@kwdef struct SVDCompression <: DMRGAlgorithm
 	D::Int = Defaults.D
 	tol::Float64 = Defaults.tol
 	verbosity::Int = 0
 end
 
-@with_kw struct Deparallelise <: DMRGAlgorithm
+@kwdef struct Deparallelise <: DMRGAlgorithm
 	tol::Float64 = DeparalleliseTol
 	verbosity::Int = Defaults.verbosity
 end
